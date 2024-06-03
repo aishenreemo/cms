@@ -1,0 +1,40 @@
+# Compiled class files
+*.class
+
+# Maven generated files
+target/
+
+# IDE/build tool specific files
+.idea/
+.project
+.classpath
+.settings/
+**/.settings/
+
+# OS specific files
+Thumbs.db
+*.DS_Store
+
+# IDE temp files
+*.log
+*.tmp
+*.iml
+*.swp
+*.bak
+
+# Profiler output
+*.prof
+
+# Test coverage reports
+**/coverage/
+
+# VCS temporary files
+.git/
+.svn/
+.cvs/
+
+# Maven wrapper (optional)
+!.mvn/wrapper/maven-wrapper.jar
+
+# Specific IDE generated files (adjust based on your IDE)
+nbproject/
