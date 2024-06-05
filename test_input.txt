@@ -1,0 +1,6 @@
+login aish3n@pm.me password
+info
+logout
+login email_1@admins.nu-dasma.edu.ph password
+info
+exit

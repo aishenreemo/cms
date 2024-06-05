@@ -1,14 +1,15 @@
 DROP TABLE borrowed_items;
 DROP TABLE items;
+DROP TABLE documents;
 DROP TABLE administrators;
 DROP TABLE students;
 DROP TABLE users;
+DROP TABLE document_type;
 DROP TABLE role_type;
 
 CREATE TABLE role_type(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description VARCHAR(255)
+    name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE users (
@@ -25,6 +26,8 @@ CREATE TABLE users (
 CREATE TABLE students (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT UNIQUE,
+    paid_amount INT,
+    tuition_fee INT,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -40,12 +43,32 @@ CREATE TABLE items (
     description VARCHAR(255)
 );
 
-CREATE TABLE borrowed_items(
+CREATE TABLE borrowed_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     item_id INT,
     student_id INT,
+    due DATE,
     FOREIGN KEY (item_id) REFERENCES items(id),
     FOREIGN KEY (student_id) REFERENCES students(id)
+);
+
+CREATE TABLE document_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE status_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    document_type_id INT,
+    document_path VARCHAR(255),
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (document_type_id) REFERENCES document_type(id)
 );
 
 INSERT INTO role_type (name) VALUES 
@@ -67,26 +90,33 @@ INSERT INTO items (name) VALUES
 INSERT INTO users (role_type_id, email, password_hash, first_name, last_name) VALUES 
     (2, "email_1@admins.nu-dasma.edu.ph",   "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN1", "LN1"),
     (2, "email_2@admins.nu-dasma.edu.ph",   "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN2", "LN2"),
+    (1, "aish3n@pm.me", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "Aivan Ross", "Anuyo"),
     (1, "email_1@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN3", "LN3"),
     (1, "email_2@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN4", "LN4"),
     (1, "email_3@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN5", "LN5"),
     (1, "email_4@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN6", "LN6"),
     (1, "email_5@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN7", "LN7"),
-    (1, "email_6@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN8", "LN8"),
-    (1, "email_7@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN9", "LN9");
+    (1, "email_6@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN8", "LN8");
 
 INSERT INTO administrators (user_id) VALUES 
     (1),
     (2);
 
-INSERT INTO students (user_id) VALUES
-    (3),
-    (4),
-    (5),
-    (6),
-    (7),
-    (8),
-    (9);
+INSERT INTO students (user_id, paid_amount, tuition_fee) VALUES
+    (3, 0, 30000),
+    (4, 0, 30000),
+    (5, 0, 30000),
+    (6, 0, 30000),
+    (7, 0, 30000),
+    (8, 0, 30000),
+    (9, 0, 30000);
+
+INSERT INTO document_type (name) VALUES
+    ("CERTIFICATE_OF_GOOD_MORAL"),
+    ("GRADE_12_REPORT_CARD"),
+    ("BIRTH_CERTIFICATE"),
+    ("ID_PICTURE"),
+    ("FORM_137");
 
 SELECT * FROM role_type;
 SELECT * FROM users;
