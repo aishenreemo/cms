@@ -12,3 +12,4 @@ public class BaseFrame extends JFrame {
         this.setLocationRelativeTo(null);
     }
 }
+
