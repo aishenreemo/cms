@@ -24,11 +24,11 @@ public class App {
             this.ui = LoginUI.getInstance();
             this.ui.run(this.scanner);
 
-            if (this.db.loggedInUser.roleType == User.ROLE_STUDENT) {
+            if (this.db.loggedInUser.roleName.equals("STUDENT")) {
                 this.ui.dispose();
                 this.ui = StudentUI.getInstance();
                 this.ui.run(this.scanner);
-            } else if (this.db.loggedInUser.roleType == User.ROLE_ADMINISTRATOR) {
+            } else if (this.db.loggedInUser.roleName.equals("ADMINISTRATOR")) {
                 this.ui.dispose();
                 this.ui = AdminUI.getInstance();
                 this.ui.run(this.scanner);
