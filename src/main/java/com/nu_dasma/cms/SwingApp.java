@@ -2,18 +2,31 @@ package com.nu_dasma.cms;
 
 import com.nu_dasma.cms.swing_ui.BaseFrame;
 import com.nu_dasma.cms.swing_ui.LoginFrame;
-import com.nu_dasma.cms.swing_ui.StudentUIFrame;
 
 public class SwingApp {
-    private BaseFrame ui;
-    private Database db;
+    private static SwingApp instance;
 
-    public SwingApp() {
+    public BaseFrame ui;
+    public Database db;
+
+    private SwingApp() {
         this.db = Database.getInstance();
-        this.ui = StudentUIFrame.getInstance();
+        this.ui = LoginFrame.getInstance();
     }
 
     public static void main(String[] args) {
-        new SwingApp();
+        SwingApp.getInstance();
+    }
+
+    public static SwingApp getInstance() {
+        if (SwingApp.instance != null) {
+            return SwingApp.instance;
+        }
+
+        synchronized (SwingApp.class) {
+            SwingApp.instance = new SwingApp();
+        }
+
+        return SwingApp.instance;
     }
 }
