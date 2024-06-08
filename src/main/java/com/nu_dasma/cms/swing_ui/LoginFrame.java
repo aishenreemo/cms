@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-
 import com.nu_dasma.cms.Database;
 import com.nu_dasma.cms.SwingApp;
 

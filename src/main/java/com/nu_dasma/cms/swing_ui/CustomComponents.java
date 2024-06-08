@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+
 import java.awt.Image;
 import java.awt.Insets;
 import java.io.InputStream;
@@ -14,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+
 import javax.swing.border.Border;
 
 class TextLabel extends JLabel {
@@ -33,10 +35,11 @@ class CustomButton extends JButton {
         super(text);
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
-        this.setFont(new Font("Arial", Font.PLAIN, 15));
+
         setContentAreaFilled(false);
         setBorder(null);
-        setBackground(Color.GRAY);
+        setBackground(Color.GREEN);
+
         Dimension buttonSize = new Dimension(width, height);
         this.setPreferredSize(buttonSize);
         this.setMaximumSize(buttonSize);
@@ -100,3 +103,4 @@ class ImageLabel extends JLabel {
         }
     }
 }
+

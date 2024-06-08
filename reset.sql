@@ -4,6 +4,7 @@ DROP TABLE documents;
 DROP TABLE administrators;
 DROP TABLE students;
 DROP TABLE users;
+DROP TABLE status_type;
 DROP TABLE document_type;
 DROP TABLE role_type;
 
@@ -44,12 +45,33 @@ CREATE TABLE items (
 );
 
 CREATE TABLE borrowed_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     item_id INT,
     student_id INT,
     due DATE,
     FOREIGN KEY (item_id) REFERENCES items(id),
-    FOREIGN KEY (student_id) REFERENCES students(id)
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    UNIQUE (item_id, student_id)
+);
+
+CREATE TABLE document_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE status_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE documents (
+    student_id INT,
+    document_type_id INT,
+    document_path VARCHAR(255),
+    status_type_id INT,
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (document_type_id) REFERENCES document_type(id),
+    FOREIGN KEY (status_type_id) REFERENCES status_type(id),
+    UNIQUE (student_id, document_type_id)
 );
 
 CREATE TABLE document_type (
@@ -88,9 +110,9 @@ INSERT INTO items (name) VALUES
     ("Lab Equipment 5");
 
 INSERT INTO users (role_type_id, email, password_hash, first_name, last_name) VALUES 
-    (2, "email_1@admins.nu-dasma.edu.ph",   "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN1", "LN1"),
-    (2, "email_2@admins.nu-dasma.edu.ph",   "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN2", "LN2"),
-    (1, "aish3n@pm.me", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "Aivan Ross", "Anuyo"),
+    (2, "daniela@admins.nu-dasma.edu.ph",   "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "Daniela Jade", "Malgapo"),
+    (2, "email_1@admins.nu-dasma.edu.ph",   "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN2", "LN2"),
+    (1, "aivan@students.nu-dasma.edu.ph",   "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "Aivan Ross", "Anuyo"),
     (1, "email_1@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN3", "LN3"),
     (1, "email_2@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN4", "LN4"),
     (1, "email_3@students.nu-dasma.edu.ph", "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "FN5", "LN5"),
@@ -111,6 +133,12 @@ INSERT INTO students (user_id, paid_amount, tuition_fee) VALUES
     (8, 0, 30000),
     (9, 0, 30000);
 
+
+INSERT INTO status_type (name) VALUES
+    ("PENDING"),
+    ("APPROVED"),
+    ("REJECTED");
+
 INSERT INTO document_type (name) VALUES
     ("CERTIFICATE_OF_GOOD_MORAL"),
     ("GRADE_12_REPORT_CARD"),
@@ -119,8 +147,11 @@ INSERT INTO document_type (name) VALUES
     ("FORM_137");
 
 SELECT * FROM role_type;
+SELECT * FROM document_type;
+SELECT * FROM status_type;
 SELECT * FROM users;
 SELECT * FROM students;
 SELECT * FROM administrators;
 SELECT * FROM items;
 SELECT * FROM borrowed_items;
+SELECT * FROM documents;

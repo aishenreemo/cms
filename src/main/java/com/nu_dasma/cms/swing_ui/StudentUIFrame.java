@@ -11,6 +11,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -83,6 +84,7 @@ public class StudentUIFrame extends BaseFrame {
 
         mainPanel.setPreferredSize(new Dimension(WIDTH - 30, (int) (HEIGHT * 3)));
         mainPanel.setMinimumSize(new Dimension(WIDTH - 30, (int) (HEIGHT * 3)));
+
         mainPanel.setLayout(null);
         mainPanel.setBackground(Color.WHITE);
 
@@ -172,12 +174,10 @@ public class StudentUIFrame extends BaseFrame {
         miscellanous.add(Box.createRigidArea(new Dimension(0, 10)));
         miscellanous.add(borrowedItemsScroll);
 
-
         mainPanel.add(studentInfo);
         mainPanel.add(matriculation);
         mainPanel.add(financial);
         mainPanel.add(miscellanous);
-
 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -189,7 +189,6 @@ public class StudentUIFrame extends BaseFrame {
         this.setResizable(false);
         this.setVisible(true);
     }
-
 
     @Override
     public void dispose() {

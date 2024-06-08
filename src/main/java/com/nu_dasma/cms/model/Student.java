@@ -6,8 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Student extends User {
+    public int studentID;
+
     private int userID;
-    private int studentID;
     private int paidAmount;
     private int tuitionFee;
 
@@ -47,6 +48,9 @@ public class Student extends User {
         System.out.printf("User ID: %d\n", this.userID);
         System.out.printf("Student ID: %d\n", this.studentID);
         System.out.printf("Email: %s\n\n", this.email);
+    }
+
+    public void printBalanceInfo() {
         System.out.println("\033[1mBalance\033[0m");
         System.out.println("-------");
         System.out.printf("Paid Amount: %d\n", this.paidAmount);
