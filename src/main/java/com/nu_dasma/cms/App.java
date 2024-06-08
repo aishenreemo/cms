@@ -2,7 +2,6 @@ package com.nu_dasma.cms;
 
 import java.util.Scanner;
 
-import com.nu_dasma.cms.model.User;
 import com.nu_dasma.cms.ui.BaseUI;
 import com.nu_dasma.cms.ui.LoginUI;
 import com.nu_dasma.cms.ui.StudentUI;

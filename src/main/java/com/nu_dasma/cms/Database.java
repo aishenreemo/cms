@@ -6,10 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.print.Doc;
+
+import com.nu_dasma.cms.model.BorrowedItem;
 import com.nu_dasma.cms.model.Document;
-import com.nu_dasma.cms.model.Student;
 import com.nu_dasma.cms.model.User;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 
 public class Database {
@@ -23,16 +31,23 @@ public class Database {
     private static final String DATABASE_USERNAME = "cms_user";
     private static final String DATABASE_PASSWORD = "cms_user_password";
 
-    private Connection connection;
+    private static final String DATABASE_UPLOAD_DIRECTORY = String.format(
+        "/home/%s/cms/cms_database",
+        System.getProperty("user.name")
+    );
 
+    public Connection connection;
     public User loggedInUser;
+    public File uploadDir;
 
     private Database() {
         try {
+            this.uploadDir = new File(DATABASE_UPLOAD_DIRECTORY);
             this.loggedInUser = null;
             this.connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
 
             System.out.println("Database connection established successfully!");
+            this.uploadDir.mkdirs();
         } catch (SQLException e) {
             System.err.println("Database connection error: " + e.getMessage());
         }
@@ -59,14 +74,9 @@ public class Database {
                 return false;
             }
 
-            int roleType = resultSet.getInt("role_type_id");
             int userID = resultSet.getInt("id");
 
-            if (roleType == User.ROLE_STUDENT) {
-                this.loggedInUser = new Student(this.connection, userID);
-            } else {
-                this.loggedInUser = new User(this.connection, userID);
-            }
+            this.loggedInUser = new User(this.connection, userID);
 
             return true;
         } catch (SQLException e) {
@@ -94,6 +104,127 @@ public class Database {
         }
 
         return documents;
+    }
+
+    public ArrayList<BorrowedItem> getStudentBorrowedItems(int studentID) {
+        ArrayList<BorrowedItem> items = new ArrayList<>();
+
+        try {
+            String sql = String.format(
+                "SELECT * FROM borrowed_items " +
+                "JOIN items ON borrowed_items.item_id = items.id " +
+                "JOIN students ON borrowed_items.student_id = students.id " +
+                "WHERE borrowed_items.student_id = ?;"
+            );
+
+            PreparedStatement statement = this.connection.prepareStatement(sql);
+            statement.setInt(1, studentID);
+            ResultSet resultSet = statement.executeQuery();
+            statement.close();
+
+            while (resultSet.next()) {
+                String itemName = resultSet.getString("items.name");
+                int itemID = resultSet.getInt("items.id");
+                java.sql.Date dueDate = resultSet.getDate("borrowed_items.due");
+                items.add(new BorrowedItem(itemID, studentID, itemName, dueDate));
+            }
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        }
+
+        return items;
+    }
+
+    public void uploadStudentDocument(int studentID, int documentTypeID, String srcAbsolutePath) {
+        try {
+            if (!new File(srcAbsolutePath).isFile()) {
+                throw new IOException("Invalid file path " + srcAbsolutePath);
+            }
+
+            int statusTypeID = this.getStatusType("PENDING");
+
+            Path source = Paths.get(srcAbsolutePath);
+            Path destination = Paths.get(this.getDocumentPath(studentID, documentTypeID, srcAbsolutePath));
+            File destinationDir = new File(destination.getParent().toString());
+
+            destinationDir.mkdirs();
+            Files.copy(source, destination);
+
+            PreparedStatement statement = connection.prepareStatement(
+                "INSERT INTO documents (student_id, document_type_id, document_path, status_type_id) VALUES (?, ?, ?, ?)"
+            );
+
+            statement.setInt(1, studentID);
+            statement.setInt(2, documentTypeID);
+            statement.setString(3, destination.toString());
+            statement.setInt(4, statusTypeID);
+
+            statement.executeUpdate();
+            System.out.println("Student document uploaded successfully!");
+        } catch (IOException e) {
+            System.err.println("IO error: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Insertion error: " + e.getMessage());
+        }
+    }
+
+    private int getStatusType(String status) throws SQLException {
+        PreparedStatement statement = this.connection.prepareStatement("SELECT (id) FROM status_type WHERE name = ? LIMIT 1;");
+        statement.setString(1, status);
+        ResultSet resultSet = statement.executeQuery();
+
+        if (!resultSet.next()) {
+            throw new SQLException("Unknown status type");
+        }
+
+        return resultSet.getInt("id");
+    }
+
+    public String getDocumentName(int documentTypeID) throws SQLException {
+        PreparedStatement statement = this.connection.prepareStatement("SELECT (name) FROM document_type WHERE id = ? LIMIT 1;");
+        statement.setInt(1, documentTypeID);
+        ResultSet resultSet = statement.executeQuery();
+
+        if (!resultSet.next()) {
+            throw new SQLException("Unknown document type");
+        }
+
+        return resultSet.getString("name");
+    }
+
+    private String getDocumentPath(int studentID, int documentTypeID, String srcAbsolutePath) throws SQLException {
+        String fileName = new File(srcAbsolutePath).getName();
+        String extension = fileName.substring(fileName.lastIndexOf("."));
+        String documentName = this.getDocumentName(documentTypeID);
+
+        return String.format(
+            "%s/student-%d/%s%s",
+            DATABASE_UPLOAD_DIRECTORY,
+            studentID,
+            documentName,
+            extension
+        );
+    }
+
+    public void viewStudentDocument(int studentID, int documentTypeID) {
+        try {
+            String documentName = this.getDocumentName(documentTypeID);
+            Document document = new Document(this.connection, documentName, documentTypeID, studentID);
+
+            if (document.path.isEmpty()) {
+                throw new SQLException(documentName + " not found.");
+            }
+
+            URI uri = URI.create("file://" + document.path);
+            String command = String.format("xdg-open %s", uri.toString());
+            Runtime.getRuntime().exec(command.split(" +"));
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error in IO: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error in IO: " + e.getMessage());
+        }
     }
 
     public void dispose() {

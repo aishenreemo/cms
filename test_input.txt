@@ -1,6 +1,15 @@
-login aish3n@pm.me password
+login aivan@students.nu-dasma.edu.ph password
+upload-document 1 /home/aishen/cms/cms_sample_documents/CERTIFICATE_OF_GOOD_MORAL.pdf
+upload-document 2 /home/aishen/cms/cms_sample_documents/GRADE_12_REPORT_CARD.pdf
+upload-document 3 /home/aishen/cms/cms_sample_documents/BIRTH_CERTIFICATE.pdf
+upload-document 4 /home/aishen/cms/cms_sample_documents/ID_PICTURE.jpg
+upload-document 5 /home/aishen/cms/cms_sample_documents/FORM_137.pdf
 info
+get-balance
+get-documents
+view-document 1
+get-borrowed-items
 logout
-login email_1@admins.nu-dasma.edu.ph password
+login daniela@admins.nu-dasma.edu.ph password
 info
 exit
