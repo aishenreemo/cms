@@ -81,8 +81,8 @@ public class StudentUIFrame extends BaseFrame {
         titlePanel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
         titlePanel.setBackground(Color.GRAY);
 
-        mainPanel.setPreferredSize(new Dimension(WIDTH - 60, (int) (HEIGHT * 3)));
-        mainPanel.setMinimumSize(new Dimension(WIDTH - 60, (int) (HEIGHT * 3)));
+        mainPanel.setPreferredSize(new Dimension(WIDTH - 60, (int) (HEIGHT * 1.8)));
+        mainPanel.setMinimumSize(new Dimension(WIDTH - 60, (int) (HEIGHT * 1.8)));
 
         mainPanel.setLayout(null);
         mainPanel.setBackground(Color.WHITE);
@@ -117,7 +117,7 @@ public class StudentUIFrame extends BaseFrame {
         studentInfo.add(idImage);
 
         matriculation.setLayout(new BorderLayout());
-        matriculation.setBounds(5, 165, WIDTH - 60, 250);
+        matriculation.setBounds(5, 165, WIDTH - 30, 250);
         matriculation.setBackground(Color.WHITE);
         matriculation.setBorder(new RoundedBorder(10));
 
@@ -127,8 +127,8 @@ public class StudentUIFrame extends BaseFrame {
         miniTitlePanel.add(rqmt);
         miniTitlePanel.add(separator1);
 
-        rqGrid.setPreferredSize(new Dimension(WIDTH - 60, (int)(250 * 0.8)));
-        rqGrid.setLayout(new GridLayout(5, 3, 5, 5));
+        rqGrid.setPreferredSize(new Dimension(WIDTH - 30, (int)(250 * 0.8)));
+        rqGrid.setLayout(new GridLayout(5, 3, 1, 1));
         rqGrid.setBackground(Color.WHITE);
 
         for (int i = 0; i < requirements.length; i++) {
@@ -136,7 +136,7 @@ public class StudentUIFrame extends BaseFrame {
             rq.setFont(new Font("Arial", Font.BOLD, 15));
             rqGrid.add(rq);
 
-            submitButtons[i] = new CustomButton("submit", 20, 15, 10, 10);
+            submitButtons[i] = new CustomButton("submit", 5, 10, 15, 15);
             submitButtons[i].setForeground(Color.WHITE);
             rqGrid.add(submitButtons[i]);
 
@@ -145,7 +145,7 @@ public class StudentUIFrame extends BaseFrame {
         matriculation.add(miniTitlePanel, BorderLayout.NORTH);
         matriculation.add(rqGrid, BorderLayout.CENTER);
 
-        financial.setBounds(5, 425, WIDTH - 60, 200);
+        financial.setBounds(5, 425, WIDTH - 30, 200);
         financial.setLayout(new BoxLayout(financial, BoxLayout.Y_AXIS));
         financial.setBackground(Color.WHITE);
         financial.setBorder(new RoundedBorder(10));
@@ -164,7 +164,7 @@ public class StudentUIFrame extends BaseFrame {
         financial.add(new TextLabel("Remaining Balance:", 10));
         financial.add(balanceAmount);
 
-        miscellanous.setBounds(5, 635, WIDTH - 60, 350);
+        miscellanous.setBounds(5, 635, WIDTH - 30, 350);
         miscellanous.setLayout(new BoxLayout(miscellanous, BoxLayout.Y_AXIS));
         miscellanous.setBackground(Color.WHITE);
         miscellanous.setBorder(new RoundedBorder(10));

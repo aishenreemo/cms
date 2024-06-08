@@ -1,5 +1,6 @@
 package com.nu_dasma.cms;
 
+import com.nu_dasma.cms.swing_ui.AdminUIFrame;
 import com.nu_dasma.cms.swing_ui.BaseFrame;
 import com.nu_dasma.cms.swing_ui.LoginFrame;
 import com.nu_dasma.cms.swing_ui.StudentUIFrame;
@@ -12,7 +13,7 @@ public class SwingApp {
 
     private SwingApp() {
         this.db = Database.getInstance();
-        this.ui = StudentUIFrame.getInstance();
+        this.ui = AdminUIFrame.getInstance();
     }
 
     public static void main(String[] args) {
