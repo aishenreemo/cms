@@ -7,15 +7,18 @@ import java.sql.SQLException;
 
 public class Document {
     public int type;
+
     public String path;
 
     private int studentID;
     private String name;
     private String status;
 
+
     public Document(Connection connection, String name, int type, int studentID) {
         try {
             this.type = type;
+
             this.studentID = studentID;
             this.name = name;
 

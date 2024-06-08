@@ -6,10 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.print.Doc;
-
 import com.nu_dasma.cms.model.BorrowedItem;
 import com.nu_dasma.cms.model.Document;
+
 import com.nu_dasma.cms.model.User;
 
 import java.io.File;

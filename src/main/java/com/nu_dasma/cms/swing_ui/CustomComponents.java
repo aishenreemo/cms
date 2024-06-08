@@ -5,10 +5,17 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Insets;
 
+import java.awt.Image;
+import java.awt.Insets;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import javax.swing.border.Border;
 
 class TextLabel extends JLabel {
@@ -28,9 +35,11 @@ class CustomButton extends JButton {
         super(text);
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
+
         setContentAreaFilled(false);
         setBorder(null);
         setBackground(Color.GREEN);
+
         Dimension buttonSize = new Dimension(width, height);
         this.setPreferredSize(buttonSize);
         this.setMaximumSize(buttonSize);
@@ -72,3 +81,26 @@ class RoundedBorder implements Border {
         g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
     }
 }
+
+class ImageLabel extends JLabel {
+    public ImageLabel(String filePath, int width, int height) {
+        super();
+
+        try {
+            ClassLoader classLoader = this.getClass().getClassLoader();
+            InputStream stream = classLoader.getResourceAsStream(filePath);
+            Image image = ImageIO.read(stream);
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+            this.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                null,
+                "Error loading image: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+}
+

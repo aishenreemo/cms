@@ -74,6 +74,25 @@ CREATE TABLE documents (
     UNIQUE (student_id, document_type_id)
 );
 
+CREATE TABLE document_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE status_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    document_type_id INT,
+    document_path VARCHAR(255),
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (document_type_id) REFERENCES document_type(id)
+);
+
 INSERT INTO role_type (name) VALUES 
     ("STUDENT"), 
     ("ADMINISTRATOR");
@@ -114,11 +133,12 @@ INSERT INTO students (user_id, paid_amount, tuition_fee) VALUES
     (8, 0, 30000),
     (9, 0, 30000);
 
+
 INSERT INTO status_type (name) VALUES
     ("PENDING"),
     ("APPROVED"),
     ("REJECTED");
-    
+
 INSERT INTO document_type (name) VALUES
     ("CERTIFICATE_OF_GOOD_MORAL"),
     ("GRADE_12_REPORT_CARD"),
