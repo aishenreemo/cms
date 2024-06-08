@@ -22,7 +22,7 @@ import com.nu_dasma.cms.SwingApp;
 public class LoginFrame extends BaseFrame {
     private static LoginFrame instance;
     public static final int WIDTH = 400;
-    public static final int HEIGHT = 400;
+    public static final int HEIGHT = 450;
 
     private MessageDigest md;
     private JTextField email;
@@ -43,10 +43,12 @@ public class LoginFrame extends BaseFrame {
 
         JPanel titlePanel = new JPanel();
         JPanel panel = new JPanel();
-        TextLabel loginLabel = new TextLabel("Log In", 50);
+        TextLabel loginLabel = new TextLabel("Log In", 30);
+        TextLabel instruction = new TextLabel("Enter your credentials.", 15);
         this.email = new JTextField(20);
         this.password = new JPasswordField(20);
         CustomButton enter = new CustomButton("Enter", 90, 30, 10, 10);
+        ImageLabel icon = new ImageLabel("dummyImage.png", 50, 50);
 
         titlePanel.setPreferredSize(new Dimension(WIDTH, (int)(HEIGHT * 0.15)));
         titlePanel.setBackground(Color.GRAY);
@@ -58,6 +60,8 @@ public class LoginFrame extends BaseFrame {
         panel.setBackground(Color.WHITE);
 
         loginLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        instruction.setAlignmentX(Component.CENTER_ALIGNMENT);
+        icon.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         email.setMaximumSize(new Dimension(300, 40));
         email.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -88,11 +92,14 @@ public class LoginFrame extends BaseFrame {
                 app.ui.revalidate();
                 app.ui.repaint();
             } else if (app.db.loggedInUser.roleName.equals("ADMINISTRATOR")) {
-                // app.ui = AdminUIFrame.getInstance();
+                app.ui = AdminUIFrame.getInstance();
             }
         });
 
+        panel.add(icon);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(loginLabel);
+        panel.add(instruction);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         panel.add(email);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));

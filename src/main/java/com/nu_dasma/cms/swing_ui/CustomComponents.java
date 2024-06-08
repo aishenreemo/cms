@@ -35,10 +35,11 @@ class CustomButton extends JButton {
         super(text);
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
+        this.setFont(new Font("Arial", Font.PLAIN, 15));
 
         setContentAreaFilled(false);
         setBorder(null);
-        setBackground(Color.GREEN);
+        setBackground(Color.GRAY);
 
         Dimension buttonSize = new Dimension(width, height);
         this.setPreferredSize(buttonSize);
