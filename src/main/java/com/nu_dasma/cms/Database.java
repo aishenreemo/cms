@@ -151,7 +151,9 @@ public class Database {
             Files.copy(source, destination);
 
             PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO documents (student_id, document_type_id, document_path, status_type_id) VALUES (?, ?, ?, ?)"
+                "INSERT INTO documents (student_id, document_type_id, document_path, status_type_id) " +
+                "VALUES (?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE document_path = VALUES(document_path), status_type_id = VALUES(status_type_id);"
             );
 
             statement.setInt(1, studentID);
