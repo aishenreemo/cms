@@ -88,7 +88,12 @@ INSERT INTO items (name) VALUES
     ("Lab Equipment 2"),
     ("Lab Equipment 3"),
     ("Lab Equipment 4"),
-    ("Lab Equipment 5");
+    ("Lab Equipment 5"),
+    ("Electric Fan 1"),
+    ("Electric Fan 2"),
+    ("Electric Fan 3"),
+    ("Electric Fan 4"),
+    ("Electric Fan 5");
 
 INSERT INTO users (role_type_id, email, password_hash, first_name, last_name) VALUES 
     (2, "daniela@admins.nu-dasma.edu.ph",   "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=", "Daniela Jade", "Malgapo"),
