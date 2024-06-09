@@ -48,14 +48,6 @@ public class AdminUIFrame extends BaseFrame {
         separator.setOrientation(SwingConstants.HORIZONTAL);
         separator.setForeground(Color.BLACK);
 
-        JSeparator separator1 = new JSeparator();
-        separator1.setOrientation(SwingConstants.HORIZONTAL);
-        separator1.setForeground(Color.BLACK);
-
-        JSeparator separator2 = new JSeparator();
-        separator2.setOrientation(SwingConstants.HORIZONTAL);
-        separator2.setForeground(Color.BLACK);
-
         ImageLabel documentIcon = new ImageLabel("documentIcon.png", 120, 120);
         ImageLabel inventoryIcon = new ImageLabel("inventoryIcon.png", 120, 120);
         ImageLabel studentIcon = new ImageLabel("studentIcon.png", 120, 120);
@@ -124,7 +116,7 @@ public class AdminUIFrame extends BaseFrame {
         students.add(studentText);
         students.add(studentButton);
 
-        mainPanel.add(new TextLabel(" Hello, welcome to the control panel!", 20));
+        mainPanel.add(new TextLabel(" Hello, welcome to your control panel!", 20));
         mainPanel.add(separator);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(documents);

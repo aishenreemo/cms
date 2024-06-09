@@ -13,7 +13,7 @@ public class SwingApp {
 
     private SwingApp() {
         this.db = Database.getInstance();
-        this.ui = StudentUIFrame.getInstance();
+        this.ui = AdminUIFrame.getInstance();
     }
 
     public static void main(String[] args) {
