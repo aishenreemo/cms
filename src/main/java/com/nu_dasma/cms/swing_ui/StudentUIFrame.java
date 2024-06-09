@@ -184,12 +184,12 @@ public class StudentUIFrame extends BaseFrame {
             int buttonWidth = 50;
             int buttonHeight = 20;
 
-            x += 195; 
+            x += 195;
             TextLabel status = new TextLabel(document.status.isEmpty() ? "MISSING" : document.status, 12);
             status.setBounds(x, y, 200, componentHeight);
             main.add(status);
 
-            x += 60; 
+            x += 60;
             CustomButton submit = new CustomButton("submit", buttonWidth, buttonHeight, 5, 5);
             submit.setBounds(x, y + 5, buttonWidth, buttonHeight);
             submit.setBackground(Color.GRAY);
