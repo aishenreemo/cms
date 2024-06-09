@@ -9,11 +9,10 @@ public class Document {
     public int type;
 
     public String path;
+    public String name;
+    public String status;
 
     private int studentID;
-    private String name;
-    private String status;
-
 
     public Document(Connection connection, String name, int type, int studentID) {
         try {

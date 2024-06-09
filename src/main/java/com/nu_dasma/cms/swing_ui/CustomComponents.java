@@ -19,11 +19,10 @@ import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
 class TextLabel extends JLabel {
-    TextLabel(String text,  int size){
+    TextLabel(String text, int size){
         super(text);
         this.setFont(new Font("Arial", Font.PLAIN, size));
         this.setForeground(Color.BLACK);
-
     }
 }
 
@@ -35,7 +34,7 @@ class CustomButton extends JButton {
         super(text);
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
-        this.setFont(new Font("Arial", Font.PLAIN, 15));
+        this.setFont(new Font("Arial", Font.PLAIN, 10));
 
         setContentAreaFilled(false);
         setBorder(null);

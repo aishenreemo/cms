@@ -7,10 +7,9 @@ import java.sql.SQLException;
 
 public class Student extends User {
     public int studentID;
-
-    private int userID;
-    private int paidAmount;
-    private int tuitionFee;
+    public int userID;
+    public int paidAmount;
+    public int tuitionFee;
 
     public Student(Connection connection, int userID) throws SQLException {
         super(connection, userID);

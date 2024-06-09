@@ -3,191 +3,324 @@ package com.nu_dasma.cms.swing_ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.io.File;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import com.nu_dasma.cms.model.BorrowedItem;
+import com.nu_dasma.cms.model.Document;
+import com.nu_dasma.cms.model.Student;
+import com.nu_dasma.cms.Database;
+
 public class StudentUIFrame extends BaseFrame {
     private static StudentUIFrame instance;
+
     public static final int WIDTH = 400;
     public static final int HEIGHT = 600;
-    public static final int COLUMNS = 3;
-    public static final int ROWS = 5;
-    String[] labelHeaders = { "Course:", "ID Number: ", "Department: ", "Email:" };
-    String[] requirements = { "Grade 12 Report Card", "Good Moral Certificate", "PSA Birth Certificate",
-        "2x2 Colored Picture", "Form 137" };
-    String[] inventoryColumns = {"Item Name", "Due Date", "Total Penalty"};
+
+    private Database db;
+    private Student user;
 
     public StudentUIFrame() {
         super("CMS Student Home");
+
         this.setLayout(new BorderLayout());
         this.setSize(WIDTH, HEIGHT);
         this.setBackground(Color.WHITE);
 
-        JPanel titlePanel = new JPanel();
-        JPanel mainPanel = new JPanel();
-        JPanel studentInfo = new JPanel();
-        JPanel matriculation = new JPanel();
-        JPanel rqGrid = new JPanel();
-        JPanel miniTitlePanel = new JPanel();
-        JPanel financial = new JPanel();
-        JPanel miscellanous = new JPanel();
+        this.initializeUser();
+        this.initializeTitlePanel();
+        this.initializeMainPanel();
 
-        CustomButton[] submitButtons = new CustomButton[requirements.length];
-        ImageLabel idImage = new ImageLabel("dummyImage.png", 150, 150);
-
-        TextLabel balanceAmount = new TextLabel("CLEARED", 40);
-        TextLabel paidAmount = new TextLabel("99999999", 20);
-        TextLabel totalTF = new TextLabel("99999999", 20);
-        TextLabel name = new TextLabel("SAMPLE NAME", 20);
-        TextLabel course = new TextLabel("Bachelor of fuckall", 10);
-        TextLabel idNum = new TextLabel("i84937248", 10);
-        TextLabel department = new TextLabel("SECA", 10);
-        TextLabel email = new TextLabel("dnuts@students.nu-narnia.edu.ph", 8);
-        TextLabel rqmt = new TextLabel("Requirements", 20);
-
-        JSeparator separator = new JSeparator();
-        separator.setOrientation(SwingConstants.HORIZONTAL);
-        separator.setForeground(Color.BLACK);
-
-        JSeparator separator1 = new JSeparator();
-        separator1.setOrientation(SwingConstants.HORIZONTAL);
-        separator1.setForeground(Color.BLACK);
-
-        JSeparator separator2 = new JSeparator();
-        separator2.setOrientation(SwingConstants.HORIZONTAL);
-        separator2.setForeground(Color.BLACK);
-
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(inventoryColumns);
-
-        JTable borrowedItems = new JTable();
-        borrowedItems.setModel(model);
-        borrowedItems.getTableHeader().setReorderingAllowed(false);
-
-        JScrollPane borrowedItemsScroll = new JScrollPane(borrowedItems);
-        borrowedItemsScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-        titlePanel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
-        titlePanel.setBackground(Color.GRAY);
-
-        mainPanel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 1.7)));
-        mainPanel.setMinimumSize(new Dimension(WIDTH, (int) (HEIGHT * 1.7)));
-
-        mainPanel.setLayout(null);
-        mainPanel.setBackground(Color.WHITE);
-
-
-        studentInfo.setLayout(null);
-        studentInfo.setBounds(5, 5, WIDTH, 150);
-        studentInfo.setBackground(Color.WHITE);
-        studentInfo.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        int headerX = 160;
-        int headerY = 10;
-        idImage.setBounds(0, 0, 150, 150);
-        name.setBounds(headerX, headerY, 200, 35);
-        course.setBounds(headerX + 65, headerY + 31, 200, 30);
-        idNum.setBounds(headerX + 85, headerY + 56, 200, 30);
-        department.setBounds(headerX + 95, headerY + 81, 200, 30);
-        email.setBounds(headerX + 45, headerY + 106, 200, 30);
-
-        studentInfo.add(name);
-        for (String label : labelHeaders) {
-            TextLabel header = new TextLabel(label, 10);
-            header.setBounds(headerX, headerY + 30, 200, 30);
-            header.setFont(new Font("Arial", Font.BOLD, 12));
-            headerY += 25;
-            studentInfo.add(header);
-        }
-        studentInfo.add(course);
-        studentInfo.add(idNum);
-        studentInfo.add(department);
-        studentInfo.add(email);
-        studentInfo.add(idImage);
-
-        matriculation.setLayout(new BorderLayout());
-        matriculation.setBounds(5, 165, (int) (WIDTH * 0.9), 250);
-        matriculation.setBackground(Color.WHITE);
-        matriculation.setBorder(new RoundedBorder(10));
-
-        miniTitlePanel.setLayout(new BoxLayout (miniTitlePanel, BoxLayout.Y_AXIS));
-        miniTitlePanel.setBackground(Color.WHITE);
-        miniTitlePanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int)(250 * 0.2)));
-        miniTitlePanel.add(rqmt);
-        miniTitlePanel.add(separator1);
-
-        rqGrid.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int)(250 * 0.8)));
-        rqGrid.setLayout(new GridLayout(5, 3, 1, 1));
-        rqGrid.setBackground(Color.WHITE);
-
-        for (int i = 0; i < requirements.length; i++) {
-            TextLabel rq = new TextLabel(requirements[i], 12);
-            rq.setFont(new Font("Arial", Font.BOLD, 12));
-            rqGrid.add(rq);
-
-            submitButtons[i] = new CustomButton("submit", 5, 10, 15, 15);
-            submitButtons[i].setForeground(Color.WHITE);
-            rqGrid.add(submitButtons[i]);
-
-        }
-
-        matriculation.add(miniTitlePanel, BorderLayout.NORTH);
-        matriculation.add(rqGrid, BorderLayout.CENTER);
-
-        financial.setBounds(5, 425, (int) (WIDTH * 0.9), 200);
-        financial.setLayout(new BoxLayout(financial, BoxLayout.Y_AXIS));
-        financial.setBackground(Color.WHITE);
-        financial.setBorder(new RoundedBorder(10));
-        financial.add(new TextLabel("Student Ledger", 20));
-        financial.add(separator);
-
-        financial.add(Box.createRigidArea(new Dimension(0, 10)));
-        financial.add(new TextLabel("Total Tuition Fee: ", 10));
-        financial.add(totalTF);
-        financial.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        financial.add(new TextLabel("Amount Paid: ", 10));
-        financial.add(paidAmount);
-        financial.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        financial.add(new TextLabel("Remaining Balance:", 10));
-        financial.add(balanceAmount);
-
-        miscellanous.setBounds(5, 635, (int) (WIDTH * 0.9), 350);
-        miscellanous.setLayout(new BoxLayout(miscellanous, BoxLayout.Y_AXIS));
-        miscellanous.setBackground(Color.WHITE);
-        miscellanous.setBorder(new RoundedBorder(10));
-        miscellanous.add(new TextLabel("Student Inventory", 20));
-        miscellanous.add(separator2);
-        miscellanous.add(Box.createRigidArea(new Dimension(0, 10)));
-        miscellanous.add(borrowedItemsScroll);
-
-        mainPanel.add(studentInfo);
-        mainPanel.add(matriculation);
-        mainPanel.add(financial);
-        mainPanel.add(miscellanous);
-
-        JScrollPane scrollPane = new JScrollPane(mainPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-        this.add(titlePanel, BorderLayout.NORTH);
-        this.add(scrollPane, BorderLayout.CENTER);
 
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setVisible(true);
+    }
+
+    private void initializeUser() {
+        try {
+            this.db = Database.getInstance();
+            this.user = new Student(this.db.connection, 3);
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        }
+    }
+
+    private void initializeTitlePanel() {
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
+        panel.setBackground(Color.GRAY);
+        this.add(panel, BorderLayout.NORTH);
+    }
+
+    private void initializeMainPanel() {
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 1.6)));
+        panel.setMinimumSize(new Dimension(WIDTH, (int) (HEIGHT * 1.6)));
+
+        panel.setLayout(null);
+        panel.setBackground(Color.WHITE);
+
+        panel.add(this.createStudentInfoPanel());
+        panel.add(this.createMatriculationPanel());
+        panel.add(this.createFinancialPanel());
+        panel.add(this.createMiscellanousPanel());
+
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        this.add(scrollPane, BorderLayout.CENTER);
+    }
+
+    private JPanel createStudentInfoPanel() {
+        JPanel panel = new JPanel();
+
+        int imageSize = (int) (HEIGHT * 0.17);
+
+        int headerX = (int) (imageSize + (WIDTH * 0.025));
+        int headerY = (int) (HEIGHT * 0.017);
+        int labelHeight = 20;
+        int fontSize = 10;
+        int padding = 5;
+
+        panel.setLayout(null);
+        panel.setBounds(padding, padding, WIDTH - (padding * 2), imageSize);
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
+
+        ImageLabel image = new ImageLabel("dummyImage.png", imageSize, imageSize);
+        image.setBounds(0, 0, imageSize, imageSize);
+        panel.add(image);
+
+        TextLabel fullNameLabel = new TextLabel(this.user.getFullName(), 20);
+        fullNameLabel.setBounds(headerX, headerY, WIDTH - headerX, 35);
+        panel.add(fullNameLabel);
+
+        Map<String, TextLabel> map = new Hashtable<>();
+        map.put("ID Number:", new TextLabel(String.valueOf(this.user.studentID), fontSize));
+        map.put("Email:", new TextLabel(this.user.email, fontSize));
+
+        headerY += 10;
+        for (Map.Entry<String, TextLabel> entry : map.entrySet()) {
+            String keyString = entry.getKey();
+            TextLabel key = new TextLabel(keyString, fontSize + 2);
+            TextLabel value = entry.getValue();
+
+            headerY += labelHeight;
+            int valueX = headerX + (int) key.getPreferredSize().getWidth() + 10;
+            value.setBounds(valueX, headerY, WIDTH - valueX, labelHeight);
+            key.setBounds(headerX, headerY, WIDTH - headerX, labelHeight);
+
+            panel.add(key);
+            panel.add(value);
+        }
+
+        return panel;
+    }
+
+    private JPanel createMatriculationPanel() {
+        JPanel panel = new JPanel();
+
+        int padding = 5;
+        int width = (int) (WIDTH * 0.9);
+        int previousPanelHeight = (int) (HEIGHT * 0.19);
+        int height = (int) (HEIGHT * 0.40);
+
+        panel.setLayout(new BorderLayout());
+        panel.setBounds(padding, padding + previousPanelHeight, width, height);
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(new RoundedBorder(10));
+
+        // add title
+        JPanel title = new JPanel();
+        title.setLayout(new BoxLayout (title, BoxLayout.Y_AXIS));
+        title.setBackground(Color.WHITE);
+        title.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int)(250 * 0.2)));
+
+        TextLabel label = new TextLabel("Requirements", 20);
+        title.add(label);
+
+        JSeparator separator = new JSeparator();
+        separator.setOrientation(SwingConstants.HORIZONTAL);
+        separator.setForeground(Color.BLACK);
+        title.add(separator);
+
+        panel.add(title, BorderLayout.NORTH);
+
+        // add grid
+        JPanel main = new JPanel();
+        ArrayList<Document> documents = this.db.getStudentDocuments(this.user.studentID);
+        main.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int)(250 * 0.8)));
+        main.setLayout(null);
+        main.setBackground(Color.WHITE);
+
+        int componentHeight = (int) (main.getPreferredSize().getHeight() / (documents.size() + 1));
+        for (int i = 0; i < documents.size(); i++) {
+            int x = 5;
+            int y = i * componentHeight;
+
+            Document document = documents.get(i);
+            TextLabel requirement = new TextLabel(document.name, 12);
+            requirement.setBounds(x, y, 200, componentHeight);
+            main.add(requirement);
+
+            int buttonWidth = 50;
+            int buttonHeight = 20;
+            CustomButton submit = new CustomButton("submit", buttonWidth, buttonHeight, 5, 5);
+            x += (int) requirement.getPreferredSize().getWidth() + 15;
+            submit.setBounds(x, y + 5, buttonWidth, buttonHeight);
+            submit.setBackground(Color.GRAY);
+            submit.setForeground(Color.WHITE);
+            submit.addActionListener(e -> {
+                StudentUIFrame frame = StudentUIFrame.getInstance();
+                String srcAbsolutePath = frame.chooseFile();
+
+                if (srcAbsolutePath == null) {
+                    return;
+                }
+
+                frame.db.uploadStudentDocument(frame.user.studentID, document.type, srcAbsolutePath);
+            });
+
+            main.add(submit);
+
+            CustomButton view = new CustomButton("view", buttonWidth, buttonHeight, 5, 5);
+            view.setBackground(Color.GRAY);
+            view.setForeground(Color.WHITE);
+            view.addActionListener(e -> {
+                StudentUIFrame frame = StudentUIFrame.getInstance();
+                try {
+                    frame.db.viewStudentDocument(frame.user.studentID, document.type);
+                } catch (SQLException err) {
+                    JOptionPane.showMessageDialog(null, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+
+            x += (int) submit.getPreferredSize().getWidth() + 5;
+            view.setBounds(x, y + 5, buttonWidth, buttonHeight);
+            main.add(view);
+        }
+
+        panel.add(main, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private String chooseFile() {
+        JFileChooser fileChooser = new JFileChooser();
+
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            return selectedFile.getAbsolutePath();
+        }
+
+        return null;
+    }
+
+    private JPanel createFinancialPanel() {
+        JPanel panel = new JPanel();
+        panel.setBounds(5, (int) (HEIGHT * 0.62), (int) (WIDTH * 0.9), 200);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(new RoundedBorder(10));
+
+        panel.add(new TextLabel("Student Ledger", 20));
+        JSeparator separator = new JSeparator();
+        separator.setOrientation(SwingConstants.HORIZONTAL);
+        separator.setForeground(Color.BLACK);
+        panel.add(separator);
+
+        TextLabel totalTuitionFee = new TextLabel(String.valueOf(this.user.tuitionFee), 20);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(new TextLabel("Total Tuition Fee: ", 10));
+        panel.add(totalTuitionFee);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        TextLabel paidAmount = new TextLabel(String.valueOf(this.user.paidAmount), 20);
+        panel.add(new TextLabel("Amount Paid: ", 10));
+        panel.add(paidAmount);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        String balance = "CLEARED";
+        if (this.user.paidAmount < this.user.tuitionFee) {
+            balance = String.valueOf(this.user.tuitionFee - this.user.paidAmount);
+        }
+        TextLabel balanceAmount = new TextLabel(balance, 40);
+        panel.add(new TextLabel("Remaining Balance:", 10));
+        panel.add(balanceAmount);
+
+        return panel;
+    }
+
+    private JPanel createMiscellanousPanel() {
+        JPanel panel = new JPanel();
+
+        int padding = 5;
+        int width = (int) (WIDTH * 0.9);
+        int previousPanelHeight = (int) (HEIGHT * 0.98);
+        int height = (int) (HEIGHT * 0.55);
+
+        panel.setLayout(new BorderLayout());
+        panel.setBounds(padding, padding + previousPanelHeight, width, height);
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(new RoundedBorder(10));
+
+        // add title
+        JPanel title = new JPanel();
+        title.setLayout(new BoxLayout (title, BoxLayout.Y_AXIS));
+        title.setBackground(Color.WHITE);
+        title.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int) (height * 0.1)));
+
+        TextLabel label = new TextLabel("Student Inventory", 20);
+        title.add(label);
+
+        JSeparator separator = new JSeparator();
+        separator.setOrientation(SwingConstants.HORIZONTAL);
+        separator.setForeground(Color.BLACK);
+        title.add(separator);
+
+        panel.add(title, BorderLayout.NORTH);
+
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new String[] {"Item Name", "Due Date", "Total Penalty"});
+
+        ArrayList<BorrowedItem> items = this.db.getStudentBorrowedItems(this.user.studentID);
+        for (BorrowedItem item : items) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Object[] row = {item.itemName, formatter.format(item.dueDate), item.getPenalty()};
+            model.addRow(row);
+        }
+
+        JTable table = new JTable();
+        table.setModel(model);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setEnabled(false);
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        return panel;
     }
 
     @Override

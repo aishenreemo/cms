@@ -1,11 +1,15 @@
 package com.nu_dasma.cms.model;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+
 public class BorrowedItem {
+    public String itemName;
+    public java.util.Date dueDate;
 
     private int itemID;
     private int studentID;
-    private String itemName;
-    private java.util.Date dueDate;
 
     public BorrowedItem(int itemID, int studentID, String itemName, java.sql.Date sqlDueDate) {
         this.itemID = itemID;
@@ -23,7 +27,26 @@ public class BorrowedItem {
             this.itemID,
             this.itemName,
             this.studentID,
-            this.dueDate == null ? "no due date" : this.dueDate.toString()
+            this.dueDateString()
         );
+    }
+
+    public String dueDateString() {
+        return this.dueDate == null ? "no due date" : this.dueDate.toString();
+    }
+
+    public int getPenalty() {
+        if (dueDate == null) {
+            return 0;
+        }
+
+        LocalDate localDueDate = this.dueDate.toInstant()
+               .atZone(ZoneId.systemDefault())
+               .toLocalDate();
+
+        int days = (int) ChronoUnit.DAYS.between(localDueDate, LocalDate.now());
+        int penalty = days < 0 ? 0 : days * 5;
+
+        return penalty;
     }
 }

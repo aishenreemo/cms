@@ -145,8 +145,10 @@ public class Database {
             Path source = Paths.get(srcAbsolutePath);
             Path destination = Paths.get(this.getDocumentPath(studentID, documentTypeID, srcAbsolutePath));
             File destinationDir = new File(destination.getParent().toString());
+            File destinationFile = new File(destination.toString());
 
             destinationDir.mkdirs();
+            destinationFile.delete();
             Files.copy(source, destination);
 
             PreparedStatement statement = connection.prepareStatement(
@@ -207,7 +209,7 @@ public class Database {
         );
     }
 
-    public void viewStudentDocument(int studentID, int documentTypeID) {
+    public void viewStudentDocument(int studentID, int documentTypeID) throws SQLException {
         try {
             String documentName = this.getDocumentName(documentTypeID);
             Document document = new Document(this.connection, documentName, documentTypeID, studentID);
@@ -219,10 +221,11 @@ public class Database {
             URI uri = URI.create("file://" + document.path);
             String command = String.format("xdg-open %s", uri.toString());
             Runtime.getRuntime().exec(command.split(" +"));
-        } catch (IllegalArgumentException e) {
-            System.err.println("Error in IO: " + e.getMessage());
         } catch (SQLException e) {
             System.err.println("Read error: " + e.getMessage());
+            throw e;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error in IO: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("Error in IO: " + e.getMessage());
         }

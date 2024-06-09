@@ -106,7 +106,7 @@ public class StudentUI implements BaseUI {
             }
 
             this.db.viewStudentDocument(this.user.studentID, Integer.parseInt(args[1]));
-        } catch (NumberFormatException e) {
+        } catch (SQLException | NumberFormatException e) {
             System.out.println("Invalid argument: " + e.getMessage());
         }
     }

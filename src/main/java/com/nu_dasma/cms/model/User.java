@@ -14,10 +14,10 @@ public class User {
     public int roleType;
     public String roleName;
 
-    protected String email;
-    protected String firstName;
-    protected String lastName;
-    protected String middleName;
+    public String email;
+    public String firstName;
+    public String lastName;
+    public String middleName;
 
     public User(int id, int roleType, String email, String firstName, String lastName, String middleName) {
         this.id = id;
@@ -61,13 +61,12 @@ public class User {
         System.out.println("\033[1mUser Info\033[0m");
         System.out.println("---------");
         System.out.printf("ID: %d\n", this.id);
-        System.out.printf(
-            "Name: %s%s, %s\n",
-            this.firstName,
-            this.middleName == null ? "" : " " + this.middleName,
-            this.lastName
-        );
+        System.out.printf("Name: %s\n", this.getFullName());
         System.out.printf("Email: %s\n", this.email);
         System.out.printf("Role: %s\n", this.roleName);
+    }
+
+    public String getFullName() {
+        return String.format("%s%s, %s", this.firstName, this.middleName == null ? "" : " " + this.middleName, this.lastName);
     }
 }
