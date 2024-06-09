@@ -209,6 +209,33 @@ public class Database {
         );
     }
 
+    public void deleteStudentDocument(int studentID, int documentTypeID) throws SQLException {
+        try {
+            String documentName = this.getDocumentName(documentTypeID);
+            Document document = new Document(this.connection, documentName, documentTypeID, studentID);
+
+            if (document.path.isEmpty()) {
+                throw new SQLException(documentName + " not found.");
+            }
+
+            PreparedStatement statement = connection.prepareStatement(
+                "DELETE FROM documents " +
+                "WHERE document_type_id = ? AND student_id = ?;"
+            );
+
+            statement.setInt(1, documentTypeID);
+            statement.setInt(2, studentID);
+
+            statement.executeUpdate();
+            System.out.println("Student document deleted successfully!");
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+            throw e;
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error in IO: " + e.getMessage());
+        }
+    }
+
     public void viewStudentDocument(int studentID, int documentTypeID) throws SQLException {
         try {
             String documentName = this.getDocumentName(documentTypeID);

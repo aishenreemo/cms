@@ -30,7 +30,7 @@ import com.nu_dasma.cms.Database;
 public class StudentUIFrame extends BaseFrame {
     private static StudentUIFrame instance;
 
-    public static final int WIDTH = 400;
+    public static final int WIDTH = 500;
     public static final int HEIGHT = 600;
 
     private Database db;
@@ -183,8 +183,14 @@ public class StudentUIFrame extends BaseFrame {
 
             int buttonWidth = 50;
             int buttonHeight = 20;
+
+            x += 195; 
+            TextLabel status = new TextLabel(document.status.isEmpty() ? "MISSING" : document.status, 12);
+            status.setBounds(x, y, 200, componentHeight);
+            main.add(status);
+
+            x += 60; 
             CustomButton submit = new CustomButton("submit", buttonWidth, buttonHeight, 5, 5);
-            x += (int) requirement.getPreferredSize().getWidth() + 15;
             submit.setBounds(x, y + 5, buttonWidth, buttonHeight);
             submit.setBackground(Color.GRAY);
             submit.setForeground(Color.WHITE);
@@ -197,11 +203,13 @@ public class StudentUIFrame extends BaseFrame {
                 }
 
                 frame.db.uploadStudentDocument(frame.user.studentID, document.type, srcAbsolutePath);
+                status.setText("PENDING");
             });
-
             main.add(submit);
 
+            x += (int) submit.getPreferredSize().getWidth() + 5;
             CustomButton view = new CustomButton("view", buttonWidth, buttonHeight, 5, 5);
+            view.setBounds(x, y + 5, buttonWidth, buttonHeight);
             view.setBackground(Color.GRAY);
             view.setForeground(Color.WHITE);
             view.addActionListener(e -> {
@@ -212,10 +220,27 @@ public class StudentUIFrame extends BaseFrame {
                     JOptionPane.showMessageDialog(null, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
-
-            x += (int) submit.getPreferredSize().getWidth() + 5;
-            view.setBounds(x, y + 5, buttonWidth, buttonHeight);
             main.add(view);
+
+            x += (int) view.getPreferredSize().getWidth() + 5;
+            CustomButton reset = new CustomButton("reset", buttonWidth, buttonHeight, 5, 5);
+            reset.setBounds(x, y + 5, buttonWidth, buttonHeight);
+            reset.setBackground(Color.GRAY);
+            reset.setForeground(Color.WHITE);
+            reset.addActionListener(e -> {
+                StudentUIFrame frame = StudentUIFrame.getInstance();
+                try {
+                    if (document.status.equals("APPROVED")) {
+                        throw new SQLException("Cant delete a document that is already approved.");
+                    }
+
+                    frame.db.deleteStudentDocument(frame.user.studentID, document.type);
+                    status.setText("MISSING");
+                } catch (SQLException err) {
+                    JOptionPane.showMessageDialog(null, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+            main.add(reset);
         }
 
         panel.add(main, BorderLayout.CENTER);
@@ -312,6 +337,7 @@ public class StudentUIFrame extends BaseFrame {
 
         JTable table = new JTable();
         table.setModel(model);
+        table.getColumnModel().getColumn(0).setPreferredWidth(200);
         table.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
