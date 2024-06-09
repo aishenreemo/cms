@@ -109,8 +109,8 @@ public class DocumentUIFrame extends BaseFrame {
         TablePanel.setBackground(new Color(255, 255, 255, 0));
 
         JPanel titlePanel = new JPanel();
-        titlePanel.setPreferredSize(new Dimension(WIDTH - 60, 30));
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, 60, 5, PADDING_SIZE));
+        titlePanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 30));
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, 20, 5, PADDING_SIZE));
         titlePanel.setLayout(new GridLayout(1, tableColumnHeaders.length, 5 ,5));
         titlePanel.setBackground(new Color(255, 255, 255, 100));
 
@@ -151,9 +151,9 @@ public class DocumentUIFrame extends BaseFrame {
         panel.setBackground(Color.WHITE);
         panel.setBorder(new RoundedBorder(10));
 
-        panel.add(new TextLabel(studentID, 20));
-        panel.add(new TextLabel(studentName, 20));
-        panel.add(new TextLabel(document, 20));
+        panel.add(new TextLabel(studentID, 12));
+        panel.add(new TextLabel(studentName, 12));
+        panel.add(new TextLabel(document, 12));
         panel.add(new CustomButton("view", 20, 50, PADDING_SIZE, PADDING_SIZE));
         panel.add(new CustomButton("approve", 20, 50, PADDING_SIZE, PADDING_SIZE));
         panel.add(new CustomButton("reject", 20, 50, PADDING_SIZE, PADDING_SIZE));
