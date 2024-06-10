@@ -12,6 +12,7 @@ import java.util.Base64;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -80,6 +81,7 @@ public class LoginFrame extends BaseFrame {
             SwingApp app = SwingApp.getInstance();
 
             if (!this.loginUser()) {
+                JOptionPane.showMessageDialog(null, "Invalid credentials; try again.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 

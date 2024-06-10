@@ -3,6 +3,7 @@ package com.nu_dasma.cms.swing_ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.io.File;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -64,9 +65,15 @@ public class StudentUIFrame extends BaseFrame {
 
     private void initializeTitlePanel() {
         JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.TRAILING, 10, 10));
         panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
         panel.setBackground(Color.GRAY);
         this.add(panel, BorderLayout.NORTH);
+
+        CustomButton logout = new CustomButton("logout", 50, 30, 10, 10);
+        logout.setBackground(Color.WHITE);
+        logout.setForeground(Color.GRAY);
+        panel.add(logout);
     }
 
     private void initializeMainPanel() {

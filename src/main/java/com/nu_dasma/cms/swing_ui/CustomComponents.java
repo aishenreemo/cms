@@ -11,6 +11,7 @@ import java.awt.Insets;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -35,6 +36,7 @@ class CustomButton extends JButton {
         this.arcWidth = arcWidth;
         this.arcHeight = arcHeight;
         this.setFont(new Font("Arial", Font.PLAIN, 10));
+        this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         setContentAreaFilled(false);
         setBorder(null);
@@ -104,3 +106,18 @@ class ImageLabel extends JLabel {
     }
 }
 
+enum Palette {
+    BLACK("#131718"),
+    WHITE("#C4C4C4"),
+    ROYAL_BLUE("#323E8F"),
+    GOLDEN_YELLOW("#FFD515");
+
+    private String hexcode;
+    private Palette(String hexcode) {
+        this.hexcode = hexcode;
+    }
+
+    public Color getColor() {
+        return Color.decode(this.hexcode);
+    }
+}

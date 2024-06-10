@@ -4,14 +4,18 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+
+import com.nu_dasma.cms.SwingApp;
 
 
 public class DocumentUIFrame extends BaseFrame {
@@ -38,8 +42,31 @@ public class DocumentUIFrame extends BaseFrame {
 
     private void initializeTitlePanel() {
         JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.TRAILING, PADDING_SIZE, PADDING_SIZE));
         panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
         panel.setBackground(Color.GRAY);
+
+        CustomButton back = new CustomButton("Back", 50, 30, PADDING_SIZE, PADDING_SIZE);
+        back.setBackground(Color.WHITE);
+        back.setForeground(Color.GRAY);
+        back.addActionListener(e -> {
+            SwingApp app = SwingApp.getInstance();
+            app.ui.dispose();
+            app.ui = AdminUIFrame.getInstance();
+        });
+        panel.add(back);
+
+        CustomButton logout = new CustomButton("logout", 50, 30, PADDING_SIZE, PADDING_SIZE);
+        logout.setBackground(Color.WHITE);
+        logout.setForeground(Color.GRAY);
+        logout.addActionListener(e -> {
+            SwingApp app = SwingApp.getInstance();
+            app.ui.dispose();
+            app.ui = LoginFrame.getInstance();
+            app.db.loggedInUser = null;
+        });
+
+        panel.add(logout);
 
         this.add(panel, BorderLayout.NORTH);
     }
@@ -103,10 +130,10 @@ public class DocumentUIFrame extends BaseFrame {
     private JPanel createTablePanel() {
         String[] tableColumnHeaders = { "Student ID", "Student Name", "Document", "View", "Approve", "Reject"};
 
-        JPanel TablePanel = new JPanel();
-        TablePanel.setPreferredSize(new Dimension(WIDTH - 60, 100));
-        TablePanel.setLayout(new BorderLayout());
-        TablePanel.setBackground(new Color(255, 255, 255, 0));
+        JPanel tablePanel = new JPanel();
+        tablePanel.setPreferredSize(new Dimension(WIDTH - 60, 100));
+        tablePanel.setLayout(new BorderLayout());
+        tablePanel.setBackground(new Color(255, 255, 255, 0));
 
         JPanel titlePanel = new JPanel();
         titlePanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 30));
@@ -121,32 +148,28 @@ public class DocumentUIFrame extends BaseFrame {
             titlePanel.add(header);
         }
 
-        TablePanel.add(titlePanel, BorderLayout.NORTH);
+        tablePanel.add(titlePanel, BorderLayout.NORTH);
 
         JPanel rowPanel = new JPanel();
-        rowPanel.setPreferredSize(new Dimension(WIDTH - 60, 70));
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.Y_AXIS));
         rowPanel.setBackground(new Color(255, 255, 255, 100));
         rowPanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, PADDING_SIZE, PADDING_SIZE, PADDING_SIZE));
 
         rowPanel.add(createRow("test", "test", "test"));
-        rowPanel.add(createRow("test", "test", "test"));
-        rowPanel.add(createRow("test", "test", "test"));
-        rowPanel.add(createRow("test", "test", "test"));
-        rowPanel.add(createRow("test", "test", "test"));
-        rowPanel.add(createRow("test", "test", "test"));
-        rowPanel.add(createRow("test", "test", "test"));
-        rowPanel.add(createRow("test", "test", "test"));
 
-        TablePanel.add(rowPanel, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(rowPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
 
-        return TablePanel;
+        return tablePanel;
 
     }
 
     private JPanel createRow(String studentID, String studentName, String document) {
         JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(WIDTH - 55, 30));
+        panel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 50));
+        panel.setMaximumSize(new Dimension((int) (WIDTH * 0.9), 50));
         panel.setLayout(new GridLayout(1, 6, 5 ,5));
         panel.setBackground(Color.WHITE);
         panel.setBorder(new RoundedBorder(10));
@@ -157,10 +180,9 @@ public class DocumentUIFrame extends BaseFrame {
         panel.add(new CustomButton("view", 20, 50, PADDING_SIZE, PADDING_SIZE));
         panel.add(new CustomButton("approve", 20, 50, PADDING_SIZE, PADDING_SIZE));
         panel.add(new CustomButton("reject", 20, 50, PADDING_SIZE, PADDING_SIZE));
-
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         return panel;
-
     }
 
 

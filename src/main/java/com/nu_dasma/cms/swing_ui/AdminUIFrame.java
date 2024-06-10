@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
+import com.nu_dasma.cms.SwingApp;
+
 public class AdminUIFrame extends BaseFrame {
     private static AdminUIFrame instance;
     public static final int WIDTH = 400;
@@ -75,6 +77,12 @@ public class AdminUIFrame extends BaseFrame {
         documentButton.setBounds(310, 100, 50, 30);
         documentButton.setBackground(Color.WHITE);
 
+        documentButton.addActionListener(e -> {
+            SwingApp app = SwingApp.getInstance();
+            app.ui.dispose();
+            app.ui = DocumentUIFrame.getInstance();
+        });
+
         documents.add(documentIcon);
         documents.add(documentLabel);
         documents.add(documentText);
@@ -93,6 +101,12 @@ public class AdminUIFrame extends BaseFrame {
         inventoryButton.setBounds(310, 100, 50, 30);
         inventoryButton.setBackground(Color.WHITE);
 
+        inventoryButton.addActionListener(e -> {
+            SwingApp app = SwingApp.getInstance();
+            app.ui.dispose();
+            app.ui = InventoryUIFrame.getInstance();
+        });
+
         inventory.add(inventoryLabel);
         inventory.add(inventoryIcon);
         inventory.add(inventoryText);
@@ -110,6 +124,12 @@ public class AdminUIFrame extends BaseFrame {
         studentText.setForeground(Color.WHITE);
         studentButton.setBounds(310, 100, 50, 30);
         studentButton.setBackground(Color.WHITE);
+
+        studentButton.addActionListener(e -> {
+            SwingApp app = SwingApp.getInstance();
+            app.ui.dispose();
+            app.ui = StudentListUIFrame.getInstance();
+        });
 
         students.add(studentIcon);
         students.add(studentLabel);
