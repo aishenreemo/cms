@@ -27,6 +27,7 @@ import com.nu_dasma.cms.model.BorrowedItem;
 import com.nu_dasma.cms.model.Document;
 import com.nu_dasma.cms.model.Student;
 import com.nu_dasma.cms.Database;
+import com.nu_dasma.cms.SwingApp;
 
 public class StudentUIFrame extends BaseFrame {
     private static StudentUIFrame instance;
@@ -48,7 +49,6 @@ public class StudentUIFrame extends BaseFrame {
         this.initializeTitlePanel();
         this.initializeMainPanel();
 
-
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setVisible(true);
@@ -68,12 +68,20 @@ public class StudentUIFrame extends BaseFrame {
         panel.setLayout(new FlowLayout(FlowLayout.TRAILING, 10, 10));
         panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
         panel.setBackground(Color.GRAY);
-        this.add(panel, BorderLayout.NORTH);
 
         CustomButton logout = new CustomButton("logout", 50, 30, 10, 10);
         logout.setBackground(Color.WHITE);
         logout.setForeground(Color.GRAY);
+        logout.addActionListener(e -> {
+            SwingApp app = SwingApp.getInstance();
+            app.ui.dispose();
+            app.ui = LoginFrame.getInstance();
+            app.db.loggedInUser = null;
+        });
+
         panel.add(logout);
+
+        this.add(panel, BorderLayout.NORTH);
     }
 
     private void initializeMainPanel() {
@@ -192,7 +200,7 @@ public class StudentUIFrame extends BaseFrame {
             int buttonHeight = 20;
 
             x += 195;
-            TextLabel status = new TextLabel(document.status.isEmpty() ? "MISSING" : document.status, 12);
+            TextLabel status = new TextLabel(document.status.isEmpty() ? "MISSING" : document.status, 10);
             status.setBounds(x, y, 200, componentHeight);
             main.add(status);
 
@@ -237,10 +245,6 @@ public class StudentUIFrame extends BaseFrame {
             reset.addActionListener(e -> {
                 StudentUIFrame frame = StudentUIFrame.getInstance();
                 try {
-                    if (document.status.equals("APPROVED")) {
-                        throw new SQLException("Cant delete a document that is already approved.");
-                    }
-
                     frame.db.deleteStudentDocument(frame.user.studentID, document.type);
                     status.setText("MISSING");
                 } catch (SQLException err) {

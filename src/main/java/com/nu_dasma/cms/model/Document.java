@@ -7,12 +7,19 @@ import java.sql.SQLException;
 
 public class Document {
     public int type;
+    public int studentID;
 
     public String path;
     public String name;
     public String status;
 
-    private int studentID;
+    public Document(int type, int studentID, String path, String name, String status) {
+        this.type = type;
+        this.studentID = studentID;
+        this.path = path;
+        this.name = name;
+        this.status = status;
+    }
 
     public Document(Connection connection, String name, int type, int studentID) {
         try {

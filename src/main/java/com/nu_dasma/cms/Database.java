@@ -258,6 +258,75 @@ public class Database {
         }
     }
 
+    public ArrayList<Document> getAllPendingDocuments() {
+        ArrayList<Document> documents = new ArrayList<>();
+
+        try {
+            int pendingStatusType = this.getStatusType("PENDING");
+            PreparedStatement statement = this.connection.prepareStatement(
+                "SELECT * FROM documents " +
+                "JOIN document_type ON documents.document_type_id = document_type.id " +
+                "WHERE documents.status_type_id = ?;"
+            );
+            statement.setInt(1, pendingStatusType);
+            ResultSet documentSet = statement.executeQuery();
+            statement.close();
+
+            while (documentSet.next()) {
+                String documentPath = documentSet.getString("documents.document_path");
+                String documentName = documentSet.getString("document_type.name");
+                int documentType = documentSet.getInt("document_type.id");
+                int studentID = documentSet.getInt("documents.student_id");
+                documents.add(new Document(documentType, studentID, documentPath, documentName, "PENDING"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        }
+
+        return documents;
+    }
+
+    public User getUserByStudentID(int studentID) {
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(
+                "SELECT * FROM students " +
+                "WHERE students.id = ?;"
+            );
+
+            statement.setInt(1, studentID);
+            ResultSet resultSet = statement.executeQuery();
+            statement.close();
+
+            if (!resultSet.next()) {
+                throw new SQLException("Unknown student.");
+            }
+
+            return new User(this.connection, resultSet.getInt("user_id"));
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public void updateDocumentStatus(int studentID, int documentTypeID, String status) {
+        try {
+            int statusTypeID = this.getStatusType(status);
+            PreparedStatement statement = this.connection.prepareStatement(
+                "UPDATE documents " +
+                "SET status_type_id = ? " +
+                "WHERE student_id = ? AND document_type_id = ?;"
+            );
+
+            statement.setInt(1, statusTypeID);
+            statement.setInt(2, studentID);
+            statement.setInt(3, documentTypeID);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        }
+    }
+
     public void dispose() {
         try {
             this.connection.close();

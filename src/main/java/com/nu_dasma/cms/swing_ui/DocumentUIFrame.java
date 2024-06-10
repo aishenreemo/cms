@@ -6,16 +6,22 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
+import com.nu_dasma.cms.Database;
 import com.nu_dasma.cms.SwingApp;
+import com.nu_dasma.cms.model.Document;
+import com.nu_dasma.cms.model.User;
 
 
 public class DocumentUIFrame extends BaseFrame {
@@ -26,8 +32,14 @@ public class DocumentUIFrame extends BaseFrame {
     public static final int ICON_SIZE = 20;
     public static final int PADDING_SIZE = 10;
 
+    private Database db;
+    private JPanel table;
+
     public DocumentUIFrame() {
         super("Documents");
+
+        this.db = Database.getInstance();
+
         this.setLayout(new BorderLayout());
         this.setSize(WIDTH, HEIGHT);
         this.setBackground(Color.WHITE);
@@ -113,21 +125,22 @@ public class DocumentUIFrame extends BaseFrame {
 
         documentPanel.add(titlePanel, BorderLayout.NORTH);
 
-        JPanel tblPanel = new JPanel();
-        tblPanel.setPreferredSize(new Dimension((int)(WIDTH * 0.9), 300));
-        tblPanel.setBackground(Color.GRAY);
-        tblPanel.setLayout(new BoxLayout(tblPanel, BoxLayout.Y_AXIS));
-        tblPanel.setBackground(new Color(255, 255, 255, 0));
+        this.table = new JPanel();
+        this.table.setPreferredSize(new Dimension((int)(WIDTH * 0.9), 300));
+        this.table.setBackground(Color.GRAY);
+        this.table.setLayout(new BoxLayout(this.table, BoxLayout.Y_AXIS));
+        this.table.setBackground(new Color(255, 255, 255, 0));
 
-        tblPanel.add(createTablePanel());
+        this.table.add(this.createTablePanel());
 
-        documentPanel.add(tblPanel, BorderLayout.CENTER);
+        documentPanel.add(this.table, BorderLayout.CENTER);
 
         return documentPanel;
-
     }
 
     private JPanel createTablePanel() {
+        this.table.revalidate();
+        this.table.repaint();
         String[] tableColumnHeaders = { "Student ID", "Student Name", "Document", "View", "Approve", "Reject"};
 
         JPanel tablePanel = new JPanel();
@@ -155,7 +168,12 @@ public class DocumentUIFrame extends BaseFrame {
         rowPanel.setBackground(new Color(255, 255, 255, 100));
         rowPanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, PADDING_SIZE, PADDING_SIZE, PADDING_SIZE));
 
-        rowPanel.add(createRow("test", "test", "test"));
+        ArrayList<Document> documents = this.db.getAllPendingDocuments();
+        for (Document document : documents) {
+            User user = this.db.getUserByStudentID(document.studentID);
+            rowPanel.add(this.createRow(document.studentID, user.getFullName(), document.name, document.type));
+            rowPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
 
         JScrollPane scrollPane = new JScrollPane(rowPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -163,10 +181,9 @@ public class DocumentUIFrame extends BaseFrame {
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         return tablePanel;
-
     }
 
-    private JPanel createRow(String studentID, String studentName, String document) {
+    private JPanel createRow(int studentID, String studentName, String document, int documentTypeID) {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 50));
         panel.setMaximumSize(new Dimension((int) (WIDTH * 0.9), 50));
@@ -174,12 +191,44 @@ public class DocumentUIFrame extends BaseFrame {
         panel.setBackground(Color.WHITE);
         panel.setBorder(new RoundedBorder(10));
 
-        panel.add(new TextLabel(studentID, 12));
-        panel.add(new TextLabel(studentName, 12));
-        panel.add(new TextLabel(document, 12));
-        panel.add(new CustomButton("view", 20, 50, PADDING_SIZE, PADDING_SIZE));
-        panel.add(new CustomButton("approve", 20, 50, PADDING_SIZE, PADDING_SIZE));
-        panel.add(new CustomButton("reject", 20, 50, PADDING_SIZE, PADDING_SIZE));
+        panel.add(new TextLabel(String.valueOf(studentID), 10));
+        panel.add(new TextLabel(studentName, 10));
+        panel.add(new TextLabel(document, 8));
+
+        CustomButton viewButton = new CustomButton("view", 20, 50, PADDING_SIZE, PADDING_SIZE);
+        CustomButton approveButton = new CustomButton("approve", 20, 50, PADDING_SIZE, PADDING_SIZE);
+        CustomButton rejectButton = new CustomButton("reject", 20, 50, PADDING_SIZE, PADDING_SIZE);
+
+        viewButton.addActionListener(e -> {
+            DocumentUIFrame frame = DocumentUIFrame.getInstance();
+            try {
+                frame.db.viewStudentDocument(studentID, documentTypeID);
+            } catch (SQLException err) {
+                JOptionPane.showMessageDialog(null, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        approveButton.addActionListener(e -> {
+            DocumentUIFrame frame = DocumentUIFrame.getInstance();
+            frame.db.updateDocumentStatus(studentID, documentTypeID, "APPROVED");
+            this.table.remove(this.table.getComponentCount() - 1);
+            this.revalidate();
+            this.repaint();
+            this.table.add(this.createTablePanel());
+        });
+
+        rejectButton.addActionListener(e -> {
+            DocumentUIFrame frame = DocumentUIFrame.getInstance();
+            frame.db.updateDocumentStatus(studentID, documentTypeID, "REJECTED");
+            this.table.remove(this.table.getComponentCount() - 1);
+            this.revalidate();
+            this.repaint();
+            this.table.add(this.createTablePanel());
+        });
+
+        panel.add(viewButton);
+        panel.add(approveButton);
+        panel.add(rejectButton);
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         return panel;
