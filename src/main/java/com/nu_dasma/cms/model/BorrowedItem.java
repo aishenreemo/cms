@@ -8,8 +8,8 @@ public class BorrowedItem {
     public String itemName;
     public java.util.Date dueDate;
 
-    private int itemID;
-    private int studentID;
+    public int itemID;
+    public int studentID;
 
     public BorrowedItem(int itemID, int studentID, String itemName, java.sql.Date sqlDueDate) {
         this.itemID = itemID;

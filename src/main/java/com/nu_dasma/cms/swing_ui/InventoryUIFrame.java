@@ -6,19 +6,33 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.text.SimpleDateFormat;
+import java.time.chrono.HijrahEra;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
+import com.nu_dasma.cms.Database;
 import com.nu_dasma.cms.SwingApp;
+import com.nu_dasma.cms.model.BorrowedItem;
+import com.nu_dasma.cms.model.Item;
 
 public class InventoryUIFrame extends BaseFrame {
     private static InventoryUIFrame instance;
+
+    private Database db;
+    private JPanel table;
+
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     public static final int COLUMNS = 3;
@@ -27,6 +41,9 @@ public class InventoryUIFrame extends BaseFrame {
 
     public InventoryUIFrame() {
         super("Inventory");
+
+        this.db = Database.getInstance();
+
         this.setLayout(new BorderLayout());
         this.setSize(WIDTH, HEIGHT);
         this.setBackground(Color.WHITE);
@@ -55,7 +72,7 @@ public class InventoryUIFrame extends BaseFrame {
         });
         panel.add(back);
 
-        CustomButton logout = new CustomButton("logout", 50, 30, PADDING_SIZE, PADDING_SIZE);
+        CustomButton logout = new CustomButton("Logout", 50, 30, PADDING_SIZE, PADDING_SIZE);
         logout.setBackground(Color.WHITE);
         logout.setForeground(Color.GRAY);
         logout.addActionListener(e -> {
@@ -111,30 +128,30 @@ public class InventoryUIFrame extends BaseFrame {
 
         inventoryPanel.add(titlePanel, BorderLayout.NORTH);
 
-        JPanel tblPanel = new JPanel();
-        tblPanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 300));
-        tblPanel.setBackground(Color.GRAY);
-        tblPanel.setLayout(new BoxLayout(tblPanel, BoxLayout.Y_AXIS));
-        tblPanel.setBackground(new Color(255, 255, 255, 0));
+        this.table = new JPanel();
+        this.table.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 300));
+        this.table.setBackground(Color.GRAY);
+        this.table.setLayout(new BoxLayout(this.table, BoxLayout.Y_AXIS));
+        this.table.setBackground(new Color(255, 255, 255, 0));
 
-        tblPanel.add(createTablePanel());
+        this.table.add(this.createTablePanel());
 
-        inventoryPanel.add(tblPanel, BorderLayout.CENTER);
+        inventoryPanel.add(this.table, BorderLayout.CENTER);
 
         return inventoryPanel;
 
     }
 
     private JPanel createTablePanel() {
-        String[] tableColumnHeaders = { "Item Name", "Student ID", "Student Name", "Due Date", "Penalty", "Action" };
+        String[] tableColumnHeaders = { "Item ID", "Item Name", "Action" };
 
-        JPanel tablePanel = new JPanel();
-        tablePanel.setPreferredSize(new Dimension(WIDTH - 60, 100));
-        tablePanel.setLayout(new BorderLayout());
-        tablePanel.setBackground(new Color(255, 255, 255, 0));
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(WIDTH - 60, 100));
+        panel.setLayout(new BorderLayout(5, 5));
+        panel.setBackground(new Color(255, 255, 255, 0));
 
         JPanel titlePanel = new JPanel();
-        titlePanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 30));
+        titlePanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int) (HEIGHT * 0.05)));
         titlePanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, 20, 5, PADDING_SIZE));
         titlePanel.setLayout(new GridLayout(1, tableColumnHeaders.length, 5, 5));
         titlePanel.setBackground(new Color(255, 255, 255, 100));
@@ -146,29 +163,59 @@ public class InventoryUIFrame extends BaseFrame {
             titlePanel.add(header);
         }
 
-        tablePanel.add(titlePanel, BorderLayout.NORTH);
+        panel.add(titlePanel, BorderLayout.NORTH);
 
-        JPanel rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.Y_AXIS));
-        rowPanel.setBackground(new Color(255, 255, 255, 100));
-        rowPanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, PADDING_SIZE, PADDING_SIZE, PADDING_SIZE));
+        JPanel itemRowsPanel = new JPanel();
+        itemRowsPanel.setLayout(new BoxLayout(itemRowsPanel, BoxLayout.Y_AXIS));
+        itemRowsPanel.setBackground(new Color(255, 255, 255, 100));
+        itemRowsPanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, PADDING_SIZE, PADDING_SIZE, PADDING_SIZE));
 
-        rowPanel.add(createRow("test", "test", "test", "test", "test"));
+        ArrayList<Item> items = this.db.getAllItems();
+        for (Item item : items) {
+            itemRowsPanel.add(this.createRow(item));
+            itemRowsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
 
-        JScrollPane scrollPane = new JScrollPane(rowPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        JScrollPane itemsScrollPane = new JScrollPane(itemRowsPanel);
+        itemsScrollPane.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int) (HEIGHT * 0.65)));
+        itemsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        itemsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        panel.add(itemsScrollPane, BorderLayout.CENTER);
 
-        return tablePanel;
+        DefaultTableModel borrowedItemsTableModel = new DefaultTableModel();
+        borrowedItemsTableModel.setColumnIdentifiers(new String[] {
+            "Item ID",
+            "Item Name",
+            "Student ID",
+            "Due Date",
+            "Total Penalty"
+        });
 
+        ArrayList<BorrowedItem> borrowedItems = this.db.getAllBorrowedItems();
+        for (BorrowedItem item : borrowedItems) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Object[] row = {item.itemID, item.itemName, item.studentID, formatter.format(item.dueDate), item.getPenalty()};
+            borrowedItemsTableModel.addRow(row);
+        }
+
+        JTable borrowedItemsTable = new JTable(borrowedItemsTableModel);
+        borrowedItemsTable.getTableHeader().setReorderingAllowed(false);
+        borrowedItemsTable.setEnabled(false);
+        borrowedItemsTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+        borrowedItemsTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+        borrowedItemsTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+        borrowedItemsTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+
+        JScrollPane borrowedItemsScrollPane = new JScrollPane(borrowedItemsTable);
+        borrowedItemsScrollPane.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int) (HEIGHT * 0.3)));
+        borrowedItemsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        borrowedItemsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        panel.add(borrowedItemsScrollPane, BorderLayout.SOUTH);
+        
+        return panel;
     }
 
-    private JPanel createRow(String itemName, String studentID,
-            String studentName,
-            String dueDate,
-            String penalty) {
-
+    private JPanel createRow(Item item) {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 50));
         panel.setMaximumSize(new Dimension((int) (WIDTH * 0.9), 50));
@@ -176,12 +223,45 @@ public class InventoryUIFrame extends BaseFrame {
         panel.setBackground(Color.WHITE);
         panel.setBorder(new RoundedBorder(10));
 
-        panel.add(new TextLabel(itemName, 12));
-        panel.add(new TextLabel(studentID, 12));
-        panel.add(new TextLabel(studentName, 12));
-        panel.add(new TextLabel(dueDate, 12));
-        panel.add(new TextLabel(penalty, 12));
-        panel.add(new CustomButton("borrow", 20, 50, PADDING_SIZE, PADDING_SIZE));
+        panel.add(new TextLabel(String.valueOf(item.id), 12));
+        panel.add(new TextLabel(item.name, 12));
+
+        CustomButton button = new CustomButton("", 20, 50, PADDING_SIZE, PADDING_SIZE);
+        if (item.isBorrowed) {
+            button.setText("Return");
+            button.setForeground(Palette.BLACK.getColor());
+            button.setBackground(Palette.GOLDEN_YELLOW.getColor());
+            button.addActionListener(e -> {
+                InventoryUIFrame frame = InventoryUIFrame.getInstance();
+                frame.db.returnItem(item.id);
+                frame.table.remove(frame.table.getComponentCount() - 1);
+                frame.table.add(frame.createTablePanel());
+                frame.revalidate();
+                frame.repaint();
+                JOptionPane.showMessageDialog(null, "Item returned successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            });
+        } else {
+            button.setText("Borrow");
+            button.setForeground(Palette.WHITE.getColor());
+            button.setBackground(Palette.ROYAL_BLUE.getColor());
+            button.addActionListener(e -> {
+                InventoryUIFrame frame = InventoryUIFrame.getInstance();
+                try {
+                    String studentID = JOptionPane.showInputDialog(null, "Enter Student ID:", "CMS Student ID Input", JOptionPane.QUESTION_MESSAGE);
+                    frame.db.borrowItemByStudent(item.id, Integer.parseInt(studentID));
+                } catch (NumberFormatException err) {
+                    JOptionPane.showMessageDialog(null, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                frame.table.remove(frame.table.getComponentCount() - 1);
+                frame.table.add(frame.createTablePanel());
+                frame.revalidate();
+                frame.repaint();
+                JOptionPane.showMessageDialog(null, "Item borrowed successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            });
+        }
+
+        panel.add(button);
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         return panel;

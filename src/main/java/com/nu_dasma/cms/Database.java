@@ -4,11 +4,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.nu_dasma.cms.model.BorrowedItem;
 import com.nu_dasma.cms.model.Document;
-
+import com.nu_dasma.cms.model.Item;
 import com.nu_dasma.cms.model.User;
 
 import java.io.File;
@@ -324,6 +326,101 @@ public class Database {
             statement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Read error: " + e.getMessage());
+        }
+    }
+
+    public ArrayList<Item> getAllItems() {
+        ArrayList<Item> items = new ArrayList<Item>();
+
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(
+                "SELECT items.id, items.name, " +
+                "   (CASE WHEN borrowed_items.item_id IS NULL THEN 'AVAILABLE' ELSE 'BORROWED' END) AS borrowed_status " +
+                "FROM items " +
+                "LEFT JOIN borrowed_items ON items.id = borrowed_items.item_id;"
+            );
+
+            ResultSet resultSet = statement.executeQuery();
+            statement.close();
+
+            while (resultSet.next()) {
+                int itemID = resultSet.getInt("items.id");
+                String itemName = resultSet.getString("items.name");
+                boolean isBorrowed = resultSet.getString("borrowed_status").equals("BORROWED");
+                items.add(new Item(itemID, itemName, isBorrowed));
+            }
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        }
+
+        return items;
+    }
+
+    public ArrayList<BorrowedItem> getAllBorrowedItems() {
+        ArrayList<BorrowedItem> items = new ArrayList<BorrowedItem>();
+
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(
+                "SELECT * FROM borrowed_items " +
+                "JOIN items ON borrowed_items.item_id = items.id;"
+            );
+            ResultSet resultSet = statement.executeQuery();
+            statement.close();
+
+            while (resultSet.next()) {
+                items.add(new BorrowedItem(
+                    resultSet.getInt("borrowed_items.item_id"),
+                    resultSet.getInt("borrowed_items.student_id"),
+                    resultSet.getString("items.name"),
+                    resultSet.getDate("borrowed_items.due")
+                ));
+            }
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        }
+
+        return items;
+    }
+
+    public void borrowItemByStudent(int itemID, int studentID) {
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(
+                "INSERT INTO borrowed_items (item_id, student_id, due) " +
+                "VALUES (?, ?, ?);"
+            );
+
+            java.util.Date today = new java.util.Date();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(today);
+            calendar.add(Calendar.DAY_OF_MONTH, 2);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format(calendar.getTime());
+
+            statement.setInt(1, itemID);
+            statement.setInt(2, studentID);
+            statement.setString(3, formattedDate);
+
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            System.err.println("Borrow error: " + e.getMessage());
+        }
+    }
+
+    public void returnItem(int itemID) {
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(
+                "DELETE FROM borrowed_items " +
+                "WHERE item_id = ?;"
+            );
+
+            statement.setInt(1, itemID);
+
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            System.err.println("Borrow error: " + e.getMessage());
         }
     }
 
