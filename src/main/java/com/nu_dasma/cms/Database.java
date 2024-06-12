@@ -455,6 +455,24 @@ public class Database {
         return students;
     }
 
+    public void setPaidAmountOfStudent(int studentID, int amount) {
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(
+                "UPDATE students " +
+                "SET paid_amount = ? " +
+                "WHERE id = ?;"
+            );
+
+            statement.setInt(1, amount);
+            statement.setInt(2, studentID);
+
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            System.err.println("Borrow error: " + e.getMessage());
+        }
+    }
+
     public void dispose() {
         try {
             this.connection.close();

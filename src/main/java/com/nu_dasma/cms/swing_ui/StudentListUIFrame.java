@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -25,6 +26,7 @@ public class StudentListUIFrame extends BaseFrame {
     private static StudentListUIFrame instance;
 
     private Database db;
+    private JPanel table;
 
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 600;
@@ -120,15 +122,15 @@ public class StudentListUIFrame extends BaseFrame {
 
         studentPanel.add(titlePanel, BorderLayout.NORTH);
 
-        JPanel tblPanel = new JPanel();
-        tblPanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 300));
-        tblPanel.setBackground(Color.GRAY);
-        tblPanel.setLayout(new BoxLayout(tblPanel, BoxLayout.Y_AXIS));
-        tblPanel.setBackground(new Color(255, 255, 255, 0));
+        this.table = new JPanel();
+        this.table.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 300));
+        this.table.setBackground(Color.GRAY);
+        this.table.setLayout(new BoxLayout(this.table, BoxLayout.Y_AXIS));
+        this.table.setBackground(new Color(255, 255, 255, 0));
 
-        tblPanel.add(createTablePanel());
+        this.table.add(this.createTablePanel());
 
-        studentPanel.add(tblPanel, BorderLayout.CENTER);
+        studentPanel.add(this.table, BorderLayout.CENTER);
 
         return studentPanel;
 
@@ -181,7 +183,6 @@ public class StudentListUIFrame extends BaseFrame {
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         return tablePanel;
-
     }
 
     private JPanel createRow(Student student) {
@@ -205,6 +206,42 @@ public class StudentListUIFrame extends BaseFrame {
 
         CustomButton button = new CustomButton("Resolve", 20, 50, PADDING_SIZE, PADDING_SIZE);
         button.setForeground(Color.WHITE);
+        button.addActionListener(e -> {
+            String[] options = {"Add paid amount", "Set paid amount", "Cancel"};
+
+            int choice = JOptionPane.showOptionDialog(null,
+                "What do you want to do:",
+                "Selection",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]
+            );
+
+            if (choice == 2) {
+                return;
+            }
+
+            StudentListUIFrame frame = StudentListUIFrame.getInstance();
+
+            try {
+                String inputAmount = JOptionPane.showInputDialog(null, "Enter Amount:", "CMS Amount Input", JOptionPane.QUESTION_MESSAGE);
+                int newAmount = choice == 0 ? student.paidAmount + Integer.parseInt(inputAmount) : Integer.parseInt(inputAmount);
+
+                this.db.setPaidAmountOfStudent(student.studentID, newAmount);
+            } catch (NumberFormatException err) {
+                JOptionPane.showMessageDialog(null, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            frame.table.remove(frame.table.getComponentCount() - 1);
+            frame.table.add(frame.createTablePanel());
+            frame.revalidate();
+            frame.repaint();
+
+            JOptionPane.showMessageDialog(null, "Succesful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        });
+
         panel.add(button);
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
