@@ -15,7 +15,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import com.nu_dasma.cms.Database;
 import com.nu_dasma.cms.SwingApp;
@@ -23,7 +25,7 @@ import com.nu_dasma.cms.SwingApp;
 public class LoginFrame extends BaseFrame {
     private static LoginFrame instance;
     public static final int WIDTH = 400;
-    public static final int HEIGHT = 450;
+    public static final int HEIGHT = 550;
 
     private MessageDigest md;
     private JTextField email;
@@ -40,7 +42,7 @@ public class LoginFrame extends BaseFrame {
 
         this.setLayout(new BorderLayout());
         this.setSize(WIDTH, HEIGHT);
-        this.setBackground(Color.WHITE);
+        this.setBackground(Palette.WHITE.getColor());
 
         JPanel titlePanel = new JPanel();
         JPanel panel = new JPanel();
@@ -49,16 +51,22 @@ public class LoginFrame extends BaseFrame {
         this.email = new JTextField(20);
         this.password = new JPasswordField(20);
         CustomButton enter = new CustomButton("Enter", 90, 30, 10, 10);
-        ImageLabel icon = new ImageLabel("dummyImage.png", 50, 50);
+        ImageLabel icon = new ImageLabel("NULogoClearanceSystem.png", 350, 100);
+        JSeparator separator = new JSeparator();
 
         titlePanel.setPreferredSize(new Dimension(WIDTH, (int)(HEIGHT * 0.15)));
-        titlePanel.setBackground(Color.GRAY);
+        titlePanel.setBackground(Palette.ROYAL_BLUE.getColor());
 
         panel.setSize(WIDTH, (int)(HEIGHT * 0.85));
         panel.setPreferredSize(new Dimension(WIDTH, (int)(HEIGHT * 0.9)));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.GOLDEN_YELLOW.getColor());
+
+        separator.setOrientation(SwingConstants.HORIZONTAL);
+        separator.setSize(10, 500);
+        separator.setForeground(Palette.ROYAL_BLUE.getColor());
+        separator.setBackground(Palette.ROYAL_BLUE.getColor());
 
         loginLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         instruction.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -74,7 +82,7 @@ public class LoginFrame extends BaseFrame {
 
         enter.setBorder(new RoundedBorder(10));
         enter.setAlignmentX(Component.CENTER_ALIGNMENT);
-        enter.setBackground(Color.GRAY);
+        enter.setBackground(Palette.ROYAL_BLUE.getColor());
         enter.setForeground(Color.WHITE);
 
         enter.addActionListener(e -> {
@@ -99,6 +107,7 @@ public class LoginFrame extends BaseFrame {
         });
 
         panel.add(icon);
+        panel.add(separator);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(loginLabel);
         panel.add(instruction);

@@ -2,7 +2,6 @@
 package com.nu_dasma.cms.swing_ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
@@ -26,7 +25,7 @@ public class AdminUIFrame extends BaseFrame {
         super("CMS Admin Home");
         this.setLayout(new BorderLayout());
         this.setSize(WIDTH, HEIGHT);
-        this.setBackground(Color.WHITE);
+        this.setBackground(Palette.WHITE.getColor());
 
         JPanel titlePanel = new JPanel();
         JPanel mainPanel = new JPanel();
@@ -48,7 +47,8 @@ public class AdminUIFrame extends BaseFrame {
 
         JSeparator separator = new JSeparator();
         separator.setOrientation(SwingConstants.HORIZONTAL);
-        separator.setForeground(Color.BLACK);
+        separator.setForeground(Palette.ROYAL_BLUE.getColor());
+        separator.setBackground(Palette.ROYAL_BLUE.getColor());
 
         ImageLabel documentIcon = new ImageLabel("documentIcon.png", 120, 120);
         ImageLabel inventoryIcon = new ImageLabel("inventoryIcon.png", 120, 120);
@@ -57,25 +57,25 @@ public class AdminUIFrame extends BaseFrame {
         Dimension panelSize = new Dimension(WIDTH - 200, 100);
 
         titlePanel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
-        titlePanel.setBackground(Color.GRAY);
+        titlePanel.setBackground(Palette.ROYAL_BLUE.getColor());
 
         mainPanel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.9)));
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setBackground(Palette.GOLDEN_YELLOW.getColor());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         documents.setPreferredSize(panelSize);
         documents.setLayout(null);
-        documents.setBackground(new Color(0x919191));
+        documents.setBackground(Palette.ROYAL_BLUE.getColor());
         documents.setBorder(new RoundedBorder(10));
 
         documentIcon.setBounds(10, 10, 120, 120);
         documentLabel.setBounds(140, 20, 100, 20);
-        documentLabel.setForeground(Color.WHITE);
+        documentLabel.setForeground(Palette.WHITE.getColor());
         documentText.setBounds(140, 40, 200, 20);
-        documentText.setForeground(Color.WHITE);
+        documentText.setForeground(Palette.WHITE.getColor());
         documentButton.setBounds(310, 100, 50, 30);
-        documentButton.setBackground(Color.WHITE);
+        documentButton.setBackground(Palette.WHITE.getColor());
 
         documentButton.addActionListener(e -> {
             SwingApp app = SwingApp.getInstance();
@@ -90,16 +90,16 @@ public class AdminUIFrame extends BaseFrame {
 
         inventory.setPreferredSize(panelSize);
         inventory.setLayout(null);
-        inventory.setBackground(new Color(0x919191));
+        inventory.setBackground(Palette.ROYAL_BLUE.getColor());
         inventory.setBorder(new RoundedBorder(10));
 
         inventoryIcon.setBounds(10, 10, 120, 120);
         inventoryLabel.setBounds(140, 20, 100, 20);
-        inventoryLabel.setForeground(Color.WHITE);
+        inventoryLabel.setForeground(Palette.WHITE.getColor());
         inventoryText.setBounds(140, 40, 200, 20);
-        inventoryText.setForeground(Color.WHITE);
+        inventoryText.setForeground(Palette.WHITE.getColor());
         inventoryButton.setBounds(310, 100, 50, 30);
-        inventoryButton.setBackground(Color.WHITE);
+        inventoryButton.setBackground(Palette.WHITE.getColor());
 
         inventoryButton.addActionListener(e -> {
             SwingApp app = SwingApp.getInstance();
@@ -114,16 +114,16 @@ public class AdminUIFrame extends BaseFrame {
 
         students.setPreferredSize(panelSize);
         students.setLayout(null);
-        students.setBackground(new Color(0x919191));
+        students.setBackground(Palette.ROYAL_BLUE.getColor());
         students.setBorder(new RoundedBorder(10));
 
         studentIcon.setBounds(10, 10, 120, 120);
         studentLabel.setBounds(140, 20, 100, 20);
-        studentLabel.setForeground(Color.WHITE);
+        studentLabel.setForeground(Palette.WHITE.getColor());
         studentText.setBounds(140, 40, 200, 20);
-        studentText.setForeground(Color.WHITE);
+        studentText.setForeground(Palette.WHITE.getColor());
         studentButton.setBounds(310, 100, 50, 30);
-        studentButton.setBackground(Color.WHITE);
+        studentButton.setBackground(Palette.WHITE.getColor());
 
         studentButton.addActionListener(e -> {
             SwingApp app = SwingApp.getInstance();
