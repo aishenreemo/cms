@@ -25,7 +25,7 @@ class TextLabel extends JLabel {
     TextLabel(String text, int size){
         super(text);
         this.setFont(new Font("Arial", Font.PLAIN, size));
-        this.setForeground(Color.BLACK);
+        this.setForeground(Palette.ROYAL_BLUE.getColor());
     }
 }
 
@@ -132,9 +132,9 @@ class ImageLabel extends JLabel {
 
 enum Palette {
     BLACK("#131718"),
-    WHITE("#C4C4C4"),
-    ROYAL_BLUE("#323E8F"),
-    GOLDEN_YELLOW("#FFD515");
+    WHITE("#FFFFFF"),
+    ROYAL_BLUE("#36438A"),
+    GOLDEN_YELLOW("#F8CF40");
 
     private String hexcode;
     private Palette(String hexcode) {

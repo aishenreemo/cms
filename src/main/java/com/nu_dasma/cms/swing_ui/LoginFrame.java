@@ -25,7 +25,7 @@ import com.nu_dasma.cms.SwingApp;
 public class LoginFrame extends BaseFrame {
     private static LoginFrame instance;
     public static final int WIDTH = 400;
-    public static final int HEIGHT = 550;
+    public static final int HEIGHT = 600;
 
     private MessageDigest md;
     private JTextField email;
@@ -51,10 +51,10 @@ public class LoginFrame extends BaseFrame {
         this.email = new JTextField(20);
         this.password = new JPasswordField(20);
         CustomButton enter = new CustomButton("Enter", 90, 30, 10, 10);
-        ImageLabel icon = new ImageLabel("NULogoClearanceSystem.png", 350, 100);
+        ImageLabel icon = new ImageLabel("NULogoClearanceSystem.png", 280, 90);
         JSeparator separator = new JSeparator();
 
-        titlePanel.setPreferredSize(new Dimension(WIDTH, (int)(HEIGHT * 0.15)));
+        titlePanel.setPreferredSize(new Dimension(WIDTH, (int)(HEIGHT * 0.1)));
         titlePanel.setBackground(Palette.ROYAL_BLUE.getColor());
 
         panel.setSize(WIDTH, (int)(HEIGHT * 0.85));
@@ -69,7 +69,10 @@ public class LoginFrame extends BaseFrame {
         separator.setBackground(Palette.ROYAL_BLUE.getColor());
 
         loginLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        loginLabel.setForeground(Palette.ROYAL_BLUE.getColor());
+
         instruction.setAlignmentX(Component.CENTER_ALIGNMENT);
+        instruction.setForeground(Palette.ROYAL_BLUE.getColor());
         icon.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         email.setMaximumSize(new Dimension(300, 40));
@@ -80,7 +83,6 @@ public class LoginFrame extends BaseFrame {
         password.setAlignmentX(Component.CENTER_ALIGNMENT);
         password.setBorder(new RoundedBorder(10));
 
-        enter.setBorder(new RoundedBorder(10));
         enter.setAlignmentX(Component.CENTER_ALIGNMENT);
         enter.setBackground(Palette.ROYAL_BLUE.getColor());
         enter.setForeground(Color.WHITE);
@@ -107,8 +109,9 @@ public class LoginFrame extends BaseFrame {
         });
 
         panel.add(icon);
-        panel.add(separator);
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(separator);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
         panel.add(loginLabel);
         panel.add(instruction);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));

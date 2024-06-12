@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,13 +53,18 @@ public class DocumentUIFrame extends BaseFrame {
 
     private void initializeTitlePanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.TRAILING, PADDING_SIZE, PADDING_SIZE));
+        panel.setLayout(null);
         panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
-        panel.setBackground(Color.GRAY);
+        panel.setBackground(Palette.ROYAL_BLUE.getColor());
+
+        ImageLabel titleIcon = new ImageLabel("NULogoAdmins.png", 170, 50);
+        titleIcon.setBounds(5, 5, 170, 50);
+        panel.add(titleIcon);
 
         CustomButton back = new CustomButton("Back", 50, 30, PADDING_SIZE, PADDING_SIZE);
-        back.setBackground(Color.WHITE);
-        back.setForeground(Color.GRAY);
+        back.setBounds(WIDTH - 125, 15, 50, 30);
+        back.setBackground(Palette.WHITE.getColor());
+        back.setForeground(Palette.ROYAL_BLUE.getColor());
         back.addActionListener(e -> {
             SwingApp app = SwingApp.getInstance();
             app.ui.dispose();
@@ -68,9 +72,10 @@ public class DocumentUIFrame extends BaseFrame {
         });
         panel.add(back);
 
-        CustomButton logout = new CustomButton("logout", 50, 30, PADDING_SIZE, PADDING_SIZE);
-        logout.setBackground(Color.WHITE);
-        logout.setForeground(Color.GRAY);
+        CustomButton logout = new CustomButton("Logout", 50, 30, PADDING_SIZE, PADDING_SIZE);
+        logout.setBounds(WIDTH - 65, 15, 50, 30);
+        logout.setBackground(Palette.WHITE.getColor());
+        logout.setForeground(Palette.ROYAL_BLUE.getColor());
         logout.addActionListener(e -> {
             SwingApp app = SwingApp.getInstance();
             app.ui.dispose();
@@ -87,7 +92,7 @@ public class DocumentUIFrame extends BaseFrame {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.9)));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.GOLDEN_YELLOW.getColor());
         panel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, PADDING_SIZE, PADDING_SIZE, PADDING_SIZE));
 
         panel.add(createDocumentPanel());
@@ -97,13 +102,13 @@ public class DocumentUIFrame extends BaseFrame {
 
     private JPanel createDocumentPanel() {
         JPanel documentPanel = new JPanel();
-        documentPanel.setBackground(Color.GRAY);
+        documentPanel.setBackground(Palette.ROYAL_BLUE.getColor());
         documentPanel.setBorder(new RoundedBorder(PADDING_SIZE));
         documentPanel.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setPreferredSize(new Dimension((int)(WIDTH * 0.9), 50));
-        titlePanel.setBackground(Color.GRAY);
+        titlePanel.setBackground(Palette.ROYAL_BLUE.getColor());
         titlePanel.setLayout(null);
 
         titlePanel.add(Box.createRigidArea(new Dimension(0, PADDING_SIZE)));
@@ -127,7 +132,6 @@ public class DocumentUIFrame extends BaseFrame {
 
         this.table = new JPanel();
         this.table.setPreferredSize(new Dimension((int)(WIDTH * 0.9), 300));
-        this.table.setBackground(Color.GRAY);
         this.table.setLayout(new BoxLayout(this.table, BoxLayout.Y_AXIS));
         this.table.setBackground(new Color(255, 255, 255, 0));
 
@@ -188,7 +192,7 @@ public class DocumentUIFrame extends BaseFrame {
         panel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 50));
         panel.setMaximumSize(new Dimension((int) (WIDTH * 0.9), 50));
         panel.setLayout(new GridLayout(1, 6, 5 ,5));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.WHITE.getColor());
         panel.setBorder(new RoundedBorder(10));
 
         panel.add(new TextLabel(String.valueOf(studentID), 10));

@@ -1,9 +1,7 @@
 package com.nu_dasma.cms.swing_ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.io.File;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -24,11 +22,11 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import com.nu_dasma.cms.Database;
+import com.nu_dasma.cms.SwingApp;
 import com.nu_dasma.cms.model.BorrowedItem;
 import com.nu_dasma.cms.model.Document;
 import com.nu_dasma.cms.model.Student;
-import com.nu_dasma.cms.Database;
-import com.nu_dasma.cms.SwingApp;
 
 public class StudentUIFrame extends BaseFrame {
     private static StudentUIFrame instance;
@@ -46,7 +44,7 @@ public class StudentUIFrame extends BaseFrame {
 
         this.setLayout(new BorderLayout());
         this.setSize(WIDTH, HEIGHT);
-        this.setBackground(Color.WHITE);
+        this.setBackground(Palette.GOLDEN_YELLOW.getColor());
 
         this.initializeUser();
         this.initializeTitlePanel();
@@ -65,7 +63,6 @@ public class StudentUIFrame extends BaseFrame {
             if (this.db.loggedInUser != null) {
                 userID = this.db.loggedInUser.id;
             }
-
             this.user = new Student(this.db.connection, userID);
 
             Document idPicture = new Document(this.db.connection, "ID_PICTURE", this.db.getDocumentType("ID_PICTURE"), this.user.studentID);
@@ -84,13 +81,18 @@ public class StudentUIFrame extends BaseFrame {
 
     private void initializeTitlePanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.TRAILING, 10, 10));
+        panel.setLayout(null);
         panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
-        panel.setBackground(Color.GRAY);
+        panel.setBackground(Palette.ROYAL_BLUE.getColor());
+
+        ImageLabel titleIcon = new ImageLabel("NULogoStudents.png", 170, 50);
+        titleIcon.setBounds(5, 5, 170, 50);
+        panel.add(titleIcon);
 
         CustomButton logout = new CustomButton("logout", 50, 30, 10, 10);
-        logout.setBackground(Color.WHITE);
-        logout.setForeground(Color.GRAY);
+        logout.setBounds(WIDTH - 65, 15, 50, 30);
+        logout.setBackground(Palette.WHITE.getColor());
+        logout.setForeground(Palette.ROYAL_BLUE.getColor());
         logout.addActionListener(e -> {
             SwingApp app = SwingApp.getInstance();
             app.ui.dispose();
@@ -109,7 +111,7 @@ public class StudentUIFrame extends BaseFrame {
         panel.setMinimumSize(new Dimension(WIDTH, (int) (HEIGHT * 1.6)));
 
         panel.setLayout(null);
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.GOLDEN_YELLOW.getColor());
 
         panel.add(this.createStudentInfoPanel());
         panel.add(this.createMatriculationPanel());
@@ -134,7 +136,7 @@ public class StudentUIFrame extends BaseFrame {
 
         panel.setLayout(null);
         panel.setBounds(padding, padding, WIDTH - (padding * 2), IMAGE_SIZE);
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.GOLDEN_YELLOW.getColor());
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
 
         this.image.setBounds(0, 0, IMAGE_SIZE, IMAGE_SIZE);
@@ -176,21 +178,22 @@ public class StudentUIFrame extends BaseFrame {
 
         panel.setLayout(new BorderLayout());
         panel.setBounds(padding, padding + previousPanelHeight, width, height);
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.ROYAL_BLUE.getColor());
         panel.setBorder(new RoundedBorder(10));
 
         // add title
         JPanel title = new JPanel();
         title.setLayout(new BoxLayout (title, BoxLayout.Y_AXIS));
-        title.setBackground(Color.WHITE);
+        title.setBackground(Palette.ROYAL_BLUE.getColor());
         title.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int)(250 * 0.2)));
 
         TextLabel label = new TextLabel("Requirements", 20);
+        label.setForeground(Palette.WHITE.getColor());
         title.add(label);
 
         JSeparator separator = new JSeparator();
         separator.setOrientation(SwingConstants.HORIZONTAL);
-        separator.setForeground(Color.BLACK);
+        separator.setForeground(Palette.WHITE.getColor());
         title.add(separator);
 
         panel.add(title, BorderLayout.NORTH);
@@ -200,7 +203,7 @@ public class StudentUIFrame extends BaseFrame {
         ArrayList<Document> documents = this.db.getStudentDocuments(this.user.studentID);
         main.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int)(250 * 0.8)));
         main.setLayout(null);
-        main.setBackground(Color.WHITE);
+        main.setBackground(Palette.ROYAL_BLUE.getColor());
 
         int componentHeight = (int) (main.getPreferredSize().getHeight() / (documents.size() + 1));
         for (int i = 0; i < documents.size(); i++) {
@@ -210,6 +213,7 @@ public class StudentUIFrame extends BaseFrame {
             Document document = documents.get(i);
             TextLabel requirement = new TextLabel(document.name, 12);
             requirement.setBounds(x, y, 200, componentHeight);
+            requirement.setForeground(Palette.WHITE.getColor());
             main.add(requirement);
 
             int buttonWidth = 50;
@@ -218,13 +222,14 @@ public class StudentUIFrame extends BaseFrame {
             x += 195;
             TextLabel status = new TextLabel(document.status.isEmpty() ? "MISSING" : document.status, 10);
             status.setBounds(x, y, 200, componentHeight);
+            status.setForeground(Palette.WHITE.getColor());
             main.add(status);
 
             x += 60;
             CustomButton submit = new CustomButton("submit", buttonWidth, buttonHeight, 5, 5);
             submit.setBounds(x, y + 5, buttonWidth, buttonHeight);
-            submit.setBackground(Color.GRAY);
-            submit.setForeground(Color.WHITE);
+            submit.setBackground(Palette.WHITE.getColor());
+            submit.setForeground(Palette.ROYAL_BLUE.getColor());
             submit.addActionListener(e -> {
                 StudentUIFrame frame = StudentUIFrame.getInstance();
                 String srcAbsolutePath = frame.chooseFile();
@@ -241,8 +246,8 @@ public class StudentUIFrame extends BaseFrame {
             x += (int) submit.getPreferredSize().getWidth() + 5;
             CustomButton view = new CustomButton("view", buttonWidth, buttonHeight, 5, 5);
             view.setBounds(x, y + 5, buttonWidth, buttonHeight);
-            view.setBackground(Color.GRAY);
-            view.setForeground(Color.WHITE);
+            view.setBackground(Palette.WHITE.getColor());
+            view.setForeground(Palette.ROYAL_BLUE.getColor());
             view.addActionListener(e -> {
                 StudentUIFrame frame = StudentUIFrame.getInstance();
                 try {
@@ -256,8 +261,8 @@ public class StudentUIFrame extends BaseFrame {
             x += (int) view.getPreferredSize().getWidth() + 5;
             CustomButton reset = new CustomButton("reset", buttonWidth, buttonHeight, 5, 5);
             reset.setBounds(x, y + 5, buttonWidth, buttonHeight);
-            reset.setBackground(Color.GRAY);
-            reset.setForeground(Color.WHITE);
+            reset.setBackground(Palette.WHITE.getColor());
+            reset.setForeground(Palette.ROYAL_BLUE.getColor());
             reset.addActionListener(e -> {
                 StudentUIFrame frame = StudentUIFrame.getInstance();
                 try {
@@ -292,23 +297,36 @@ public class StudentUIFrame extends BaseFrame {
         JPanel panel = new JPanel();
         panel.setBounds(5, (int) (HEIGHT * 0.62), (int) (WIDTH * 0.9), 200);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.ROYAL_BLUE.getColor());
         panel.setBorder(new RoundedBorder(10));
 
-        panel.add(new TextLabel("Student Ledger", 20));
+        TextLabel label = new TextLabel("Student Ledger", 20);
+        label.setForeground(Palette.WHITE.getColor());
+        panel.add(label);
+
         JSeparator separator = new JSeparator();
         separator.setOrientation(SwingConstants.HORIZONTAL);
-        separator.setForeground(Color.BLACK);
+        separator.setForeground(Palette.WHITE.getColor());
         panel.add(separator);
 
         TextLabel totalTuitionFee = new TextLabel(String.valueOf(this.user.tuitionFee), 20);
+        totalTuitionFee.setForeground(Palette.WHITE.getColor());
+
+        TextLabel tuitionLabel = new TextLabel("Total Tuition Fee: ", 10);
+        tuitionLabel.setForeground(Palette.WHITE.getColor());
+
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
-        panel.add(new TextLabel("Total Tuition Fee: ", 10));
+        panel.add(tuitionLabel);
         panel.add(totalTuitionFee);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         TextLabel paidAmount = new TextLabel(String.valueOf(this.user.paidAmount), 20);
-        panel.add(new TextLabel("Amount Paid: ", 10));
+        paidAmount.setForeground(Palette.WHITE.getColor());
+
+        TextLabel paidLabel = new TextLabel("Amount Paid: ", 10);
+        paidLabel.setForeground(Palette.WHITE.getColor());
+
+        panel.add(paidLabel);
         panel.add(paidAmount);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
@@ -317,7 +335,12 @@ public class StudentUIFrame extends BaseFrame {
             balance = String.valueOf(this.user.tuitionFee - this.user.paidAmount);
         }
         TextLabel balanceAmount = new TextLabel(balance, 40);
-        panel.add(new TextLabel("Remaining Balance:", 10));
+        balanceAmount.setForeground(Palette.WHITE.getColor());
+
+        TextLabel balanceLabel = new TextLabel("Remaining Balance:", 10);
+        balanceLabel.setForeground(Palette.WHITE.getColor());
+
+        panel.add(balanceLabel);
         panel.add(balanceAmount);
 
         return panel;
@@ -333,21 +356,22 @@ public class StudentUIFrame extends BaseFrame {
 
         panel.setLayout(new BorderLayout());
         panel.setBounds(padding, padding + previousPanelHeight, width, height);
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.ROYAL_BLUE.getColor());
         panel.setBorder(new RoundedBorder(10));
 
         // add title
         JPanel title = new JPanel();
         title.setLayout(new BoxLayout (title, BoxLayout.Y_AXIS));
-        title.setBackground(Color.WHITE);
+        title.setBackground(Palette.ROYAL_BLUE.getColor());
         title.setPreferredSize(new Dimension((int) (WIDTH * 0.9), (int) (height * 0.1)));
 
         TextLabel label = new TextLabel("Student Inventory", 20);
+        label.setForeground(Palette.WHITE.getColor());
         title.add(label);
 
         JSeparator separator = new JSeparator();
         separator.setOrientation(SwingConstants.HORIZONTAL);
-        separator.setForeground(Color.BLACK);
+        separator.setForeground(Palette.ROYAL_BLUE.getColor());
         title.add(separator);
 
         panel.add(title, BorderLayout.NORTH);

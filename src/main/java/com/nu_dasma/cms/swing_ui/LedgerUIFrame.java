@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
@@ -22,8 +21,8 @@ import com.nu_dasma.cms.Database;
 import com.nu_dasma.cms.SwingApp;
 import com.nu_dasma.cms.model.Student;
 
-public class StudentListUIFrame extends BaseFrame {
-    private static StudentListUIFrame instance;
+public class LedgerUIFrame extends BaseFrame {
+    private static LedgerUIFrame instance;
 
     private Database db;
     private JPanel table;
@@ -34,7 +33,7 @@ public class StudentListUIFrame extends BaseFrame {
     public static final int ICON_SIZE = 20;
     public static final int PADDING_SIZE = 10;
 
-    public StudentListUIFrame() {
+    public LedgerUIFrame() {
         super("Student List");
 
         this.db = Database.getInstance();
@@ -53,13 +52,18 @@ public class StudentListUIFrame extends BaseFrame {
 
     private void initializeTitlePanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout(FlowLayout.TRAILING, PADDING_SIZE, PADDING_SIZE));
+        panel.setLayout(null);
         panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
-        panel.setBackground(Color.GRAY);
+        panel.setBackground(Palette.ROYAL_BLUE.getColor());
+
+        ImageLabel titleIcon = new ImageLabel("NULogoAdmins.png", 170, 50);
+        titleIcon.setBounds(5, 5, 170, 50);
+        panel.add(titleIcon);
 
         CustomButton back = new CustomButton("Back", 50, 30, PADDING_SIZE, PADDING_SIZE);
-        back.setBackground(Color.WHITE);
-        back.setForeground(Color.GRAY);
+        back.setBounds(WIDTH - 125, 15, 50, 30);
+        back.setBackground(Palette.WHITE.getColor());
+        back.setForeground(Palette.ROYAL_BLUE.getColor());
         back.addActionListener(e -> {
             SwingApp app = SwingApp.getInstance();
             app.ui.dispose();
@@ -68,55 +72,56 @@ public class StudentListUIFrame extends BaseFrame {
         panel.add(back);
 
         CustomButton logout = new CustomButton("Logout", 50, 30, PADDING_SIZE, PADDING_SIZE);
-        logout.setBackground(Color.WHITE);
-        logout.setForeground(Color.GRAY);
+        logout.setBounds(WIDTH - 65, 15, 50, 30);
+        logout.setBackground(Palette.WHITE.getColor());
+        logout.setForeground(Palette.ROYAL_BLUE.getColor());
         logout.addActionListener(e -> {
             SwingApp app = SwingApp.getInstance();
             app.ui.dispose();
             app.ui = LoginFrame.getInstance();
             app.db.loggedInUser = null;
         });
+
         panel.add(logout);
 
         this.add(panel, BorderLayout.NORTH);
     }
-
     private void initializeMainPanel() {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.9)));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.GOLDEN_YELLOW.getColor());
         panel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, PADDING_SIZE, PADDING_SIZE, PADDING_SIZE));
-        panel.add(createStudentPanel());
+        panel.add(createLedgerPanel());
 
         this.add(panel, BorderLayout.CENTER);
     }
 
-    private JPanel createStudentPanel() {
+    private JPanel createLedgerPanel() {
         JPanel studentPanel = new JPanel();
-        studentPanel.setBackground(Color.GRAY);
+        studentPanel.setBackground(Palette.ROYAL_BLUE.getColor());
         studentPanel.setBorder(new RoundedBorder(PADDING_SIZE));
         studentPanel.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 50));
-        titlePanel.setBackground(Color.GRAY);
+        titlePanel.setBackground(Palette.ROYAL_BLUE.getColor());
         titlePanel.setLayout(null);
 
         titlePanel.add(Box.createRigidArea(new Dimension(0, PADDING_SIZE)));
-        ImageLabel studentIcon = new ImageLabel("studentIcon.png", ICON_SIZE, ICON_SIZE);
-        studentIcon.setBounds(PADDING_SIZE, PADDING_SIZE, ICON_SIZE, ICON_SIZE);
-        titlePanel.add(studentIcon);
+        ImageLabel ledgerIcon = new ImageLabel("ledgerIcon.png", ICON_SIZE, ICON_SIZE);
+        ledgerIcon.setBounds(PADDING_SIZE, PADDING_SIZE, ICON_SIZE, ICON_SIZE);
+        titlePanel.add(ledgerIcon);
 
-        TextLabel studentLabel = new TextLabel("Student List", ICON_SIZE);
-        studentLabel.setBounds(35, PADDING_SIZE, 300, ICON_SIZE);
-        studentLabel.setForeground(Color.WHITE);
-        titlePanel.add(studentLabel);
+        TextLabel ledgerLabel = new TextLabel("Ledger", ICON_SIZE);
+        ledgerLabel.setBounds(35, PADDING_SIZE, 300, ICON_SIZE);
+        ledgerLabel.setForeground(Palette.WHITE.getColor());
+        titlePanel.add(ledgerLabel);
         titlePanel.add(Box.createRigidArea(new Dimension(0, PADDING_SIZE)));
 
         JSeparator separator = new JSeparator();
         separator.setOrientation(SwingConstants.HORIZONTAL);
-        separator.setForeground(Color.WHITE);
+        separator.setForeground(Palette.WHITE.getColor());
         separator.setBounds(PADDING_SIZE, 35, WIDTH - 50, ICON_SIZE);
         titlePanel.add(separator);
 
@@ -159,7 +164,7 @@ public class StudentListUIFrame extends BaseFrame {
 
         for (String tableHeader : tableColumnHeaders) {
             TextLabel header = new TextLabel(tableHeader, 15);
-            header.setForeground(Color.WHITE);
+            header.setForeground(Palette.WHITE.getColor());
             header.setAlignmentX(Component.CENTER_ALIGNMENT);
             titlePanel.add(header);
         }
@@ -180,6 +185,7 @@ public class StudentListUIFrame extends BaseFrame {
         JScrollPane scrollPane = new JScrollPane(rowPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBackground(Palette.WHITE.getColor());
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         return tablePanel;
@@ -190,7 +196,7 @@ public class StudentListUIFrame extends BaseFrame {
         panel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 50));
         panel.setMaximumSize(new Dimension((int) (WIDTH * 0.9), 50));
         panel.setLayout(new GridLayout(1, 6, 5, 5));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(Palette.WHITE.getColor());
         panel.setBorder(new RoundedBorder(10));
 
         panel.add(new TextLabel(String.valueOf(student.id), 12));
@@ -205,6 +211,7 @@ public class StudentListUIFrame extends BaseFrame {
         }
 
         CustomButton button = new CustomButton("Resolve", 20, 50, PADDING_SIZE, PADDING_SIZE);
+        button.setBackground(Palette.ROYAL_BLUE.getColor());
         button.setForeground(Color.WHITE);
         button.addActionListener(e -> {
             String[] options = {"Add paid amount", "Set paid amount", "Cancel"};
@@ -223,7 +230,7 @@ public class StudentListUIFrame extends BaseFrame {
                 return;
             }
 
-            StudentListUIFrame frame = StudentListUIFrame.getInstance();
+            LedgerUIFrame frame = LedgerUIFrame.getInstance();
 
             try {
                 String inputAmount = JOptionPane.showInputDialog(null, "Enter Amount:", "CMS Amount Input", JOptionPane.QUESTION_MESSAGE);
@@ -250,21 +257,21 @@ public class StudentListUIFrame extends BaseFrame {
 
     @Override
     public void dispose() {
-        synchronized (StudentListUIFrame.class) {
-            StudentListUIFrame.instance = null;
+        synchronized (LedgerUIFrame.class) {
+            LedgerUIFrame.instance = null;
             super.dispose();
         }
     }
 
-    public static StudentListUIFrame getInstance() {
-        if (StudentListUIFrame.instance != null) {
-            return StudentListUIFrame.instance;
+    public static LedgerUIFrame getInstance() {
+        if (LedgerUIFrame.instance != null) {
+            return LedgerUIFrame.instance;
         }
 
-        synchronized (StudentListUIFrame.class) {
-            StudentListUIFrame.instance = new StudentListUIFrame();
+        synchronized (LedgerUIFrame.class) {
+            LedgerUIFrame.instance = new LedgerUIFrame();
         }
 
-        return StudentListUIFrame.instance;
+        return LedgerUIFrame.instance;
     }
 }
