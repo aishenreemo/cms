@@ -31,7 +31,7 @@ public class InventoryUIFrame extends BaseFrame {
     private Database db;
     private JPanel table;
 
-    public static final int WIDTH = 800;
+    public static final int WIDTH = 900;
     public static final int HEIGHT = 600;
     public static final int COLUMNS = 3;
     public static final int ICON_SIZE = 20;

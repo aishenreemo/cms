@@ -25,7 +25,7 @@ import com.nu_dasma.cms.model.User;
 
 public class DocumentUIFrame extends BaseFrame {
     private static DocumentUIFrame instance;
-    public static final int WIDTH = 800;
+    public static final int WIDTH = 1000;
     public static final int HEIGHT = 600;
     public static final int COLUMNS = 3;
     public static final int ICON_SIZE = 20;

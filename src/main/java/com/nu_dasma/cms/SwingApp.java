@@ -16,7 +16,7 @@ public class SwingApp {
 
     private SwingApp() {
         this.db = Database.getInstance();
-        this.ui = LedgerUIFrame.getInstance();
+        this.ui = AdminUIFrame.getInstance();
     }
 
     public static void main(String[] args) {
