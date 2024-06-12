@@ -8,7 +8,9 @@ import java.awt.Graphics;
 
 import java.awt.Image;
 import java.awt.Insets;
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -81,6 +83,28 @@ class RoundedBorder implements Border {
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         g.setColor(c.getForeground());
         g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+    }
+}
+
+class AbsolutePathImageLabel extends JLabel {
+    public AbsolutePathImageLabel(String filePath, int width, int height) {
+        super();
+
+        try {
+            URL fileURL = new File(filePath).toURI().toURL();
+            ImageIcon icon = new ImageIcon(fileURL);
+            Image scaledImage = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+            this.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                null,
+                "Error loading image: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            System.out.println(e.getMessage());
+        }
     }
 }
 

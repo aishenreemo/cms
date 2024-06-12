@@ -34,9 +34,11 @@ public class StudentUIFrame extends BaseFrame {
 
     public static final int WIDTH = 500;
     public static final int HEIGHT = 600;
+    public static final int IMAGE_SIZE = (int) (HEIGHT * 0.17);
 
     private Database db;
     private Student user;
+    private AbsolutePathImageLabel image;
 
     public StudentUIFrame() {
         super("CMS Student Home");
@@ -58,6 +60,15 @@ public class StudentUIFrame extends BaseFrame {
         try {
             this.db = Database.getInstance();
             this.user = new Student(this.db.connection, 3);
+
+            Document idPicture = new Document(this.db.connection, "ID_PICTURE", this.db.getDocumentType("ID_PICTURE"), this.user.studentID);
+            String imagePath = "dummyImage.png";
+
+            if (!idPicture.path.isEmpty()) {
+                imagePath = idPicture.path;
+            }
+
+            this.image = new AbsolutePathImageLabel(imagePath, IMAGE_SIZE, IMAGE_SIZE);
         } catch (SQLException e) {
             System.err.println("Read error: " + e.getMessage());
         }
@@ -107,22 +118,19 @@ public class StudentUIFrame extends BaseFrame {
     private JPanel createStudentInfoPanel() {
         JPanel panel = new JPanel();
 
-        int imageSize = (int) (HEIGHT * 0.17);
-
-        int headerX = (int) (imageSize + (WIDTH * 0.025));
+        int headerX = (int) (IMAGE_SIZE + (WIDTH * 0.025));
         int headerY = (int) (HEIGHT * 0.017);
         int labelHeight = 20;
         int fontSize = 10;
         int padding = 5;
 
         panel.setLayout(null);
-        panel.setBounds(padding, padding, WIDTH - (padding * 2), imageSize);
+        panel.setBounds(padding, padding, WIDTH - (padding * 2), IMAGE_SIZE);
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createEmptyBorder(padding, padding, padding, padding));
 
-        ImageLabel image = new ImageLabel("dummyImage.png", imageSize, imageSize);
-        image.setBounds(0, 0, imageSize, imageSize);
-        panel.add(image);
+        this.image.setBounds(0, 0, IMAGE_SIZE, IMAGE_SIZE);
+        panel.add(this.image);
 
         TextLabel fullNameLabel = new TextLabel(this.user.getFullName(), 20);
         fullNameLabel.setBounds(headerX, headerY, WIDTH - headerX, 35);

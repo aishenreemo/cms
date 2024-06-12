@@ -186,6 +186,18 @@ public class Database {
         return resultSet.getInt("id");
     }
 
+    public int getDocumentType(String documentName) throws SQLException {
+        PreparedStatement statement = this.connection.prepareStatement("SELECT (id) FROM document_type WHERE name = ? LIMIT 1;");
+        statement.setString(1, documentName);
+        ResultSet resultSet = statement.executeQuery();
+
+        if (!resultSet.next()) {
+            throw new SQLException("Unknown document type");
+        }
+
+        return resultSet.getInt("id");
+    }
+
     public String getDocumentName(int documentTypeID) throws SQLException {
         PreparedStatement statement = this.connection.prepareStatement("SELECT (name) FROM document_type WHERE id = ? LIMIT 1;");
         statement.setInt(1, documentTypeID);
