@@ -16,7 +16,7 @@ public class SwingApp {
 
     private SwingApp() {
         this.db = Database.getInstance();
-        this.ui = StudentListUIFrame.getInstance();
+        this.ui = LoginFrame.getInstance();
     }
 
     public static void main(String[] args) {

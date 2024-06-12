@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,7 +39,7 @@ public class StudentUIFrame extends BaseFrame {
 
     private Database db;
     private Student user;
-    private AbsolutePathImageLabel image;
+    private JLabel image;
 
     public StudentUIFrame() {
         super("CMS Student Home");
@@ -59,16 +60,23 @@ public class StudentUIFrame extends BaseFrame {
     private void initializeUser() {
         try {
             this.db = Database.getInstance();
-            this.user = new Student(this.db.connection, 3);
 
-            Document idPicture = new Document(this.db.connection, "ID_PICTURE", this.db.getDocumentType("ID_PICTURE"), this.user.studentID);
-            String imagePath = "dummyImage.png";
-
-            if (!idPicture.path.isEmpty()) {
-                imagePath = idPicture.path;
+            int userID = 3;
+            if (this.db.loggedInUser != null) {
+                userID = this.db.loggedInUser.id;
             }
 
-            this.image = new AbsolutePathImageLabel(imagePath, IMAGE_SIZE, IMAGE_SIZE);
+            this.user = new Student(this.db.connection, userID);
+
+            Document idPicture = new Document(this.db.connection, "ID_PICTURE", this.db.getDocumentType("ID_PICTURE"), this.user.studentID);
+            String defaultImagePath = "studentIcon.png";
+
+            if (!idPicture.path.isEmpty()) {
+                this.image = new AbsolutePathImageLabel(idPicture.path, IMAGE_SIZE, IMAGE_SIZE);
+            } else {
+                this.image = new ImageLabel(defaultImagePath, IMAGE_SIZE, IMAGE_SIZE);
+            }
+
         } catch (SQLException e) {
             System.err.println("Read error: " + e.getMessage());
         }
