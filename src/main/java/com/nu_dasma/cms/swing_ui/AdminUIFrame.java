@@ -2,11 +2,13 @@
 package com.nu_dasma.cms.swing_ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
@@ -14,15 +16,18 @@ import com.nu_dasma.cms.SwingApp;
 
 public class AdminUIFrame extends BaseFrame {
     private static AdminUIFrame instance;
-    public static final int WIDTH = 900;
-    public static final int HEIGHT = 600;
+    public static final int WIDTH = 1000;
+    public static final int HEIGHT = 800;
     public static final int PADDING_SIZE = 10;
     public static final int PANEL_WIDTH = ((WIDTH - 50) / 3);
     public static final int PANEL_HEIGHT = 120;
     public static final int PANEL_Y_AXIS = 50;
-    public static final int PANEL_BUTTON_WIDTH= 50;
-    public static final int PANEL_BUTTON_HEIGHT= 30;
-    public static final int PANEL_ICON_SIZE= 100;
+    public static final int PANEL_BUTTON_WIDTH = 50;
+    public static final int PANEL_BUTTON_HEIGHT = 30;
+
+    public static final int PANEL_ICON_SIZE = 100;
+    public static final int TABLE_WIDTH = WIDTH - 30;
+    public static final int TABLE_HEIGHT = (int) (HEIGHT * 0.65);
 
     public AdminUIFrame() {
         super("CMS Admin Home");
@@ -41,7 +46,7 @@ public class AdminUIFrame extends BaseFrame {
     private void initializeTitlePanel() {
         JPanel panel = new JPanel();
         panel.setLayout(null);
-        panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
+        panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.075)));
         panel.setBackground(Palette.ROYAL_BLUE.getColor());
 
         ImageLabel titleIcon = new ImageLabel("NULogoAdmins.png", 170, 50);
@@ -86,6 +91,7 @@ public class AdminUIFrame extends BaseFrame {
         mainPanel.add(createDocumentPanel());
         mainPanel.add(createInventoryPanel());
         mainPanel.add(createLedgerPanel());
+        mainPanel.add(createMainTablePanel());
 
         this.add(mainPanel, BorderLayout.CENTER);
     }
@@ -134,7 +140,6 @@ public class AdminUIFrame extends BaseFrame {
         ImageLabel inventoryIcon = new ImageLabel("inventoryIcon.png", PANEL_ICON_SIZE, PANEL_ICON_SIZE);
         inventoryIcon.setBounds(10, 10, PANEL_ICON_SIZE, PANEL_ICON_SIZE);
         inventory.add(inventoryIcon);
-
 
         TextLabel inventoryLabel = new TextLabel("Inventory", 20);
         inventoryLabel.setBounds(PANEL_ICON_SIZE + 15, 20, 100, 20);
@@ -191,6 +196,102 @@ public class AdminUIFrame extends BaseFrame {
         ledger.add(ledgerButton);
 
         return ledger;
+    }
+
+    private JPanel createMainTablePanel() {
+        int ICON_SIZE = 20;
+        //title + blank panel for table
+        JPanel mainTblPanel = new JPanel();
+        mainTblPanel.setBounds(10, 180, TABLE_WIDTH, TABLE_HEIGHT);
+        mainTblPanel.setLayout(new BorderLayout());
+        mainTblPanel.setBorder(new RoundedBorder(10));
+        mainTblPanel.setBackground(Palette.ROYAL_BLUE.getColor());
+
+        //titlePanel
+        JPanel titlePanel = new JPanel();
+        titlePanel.setPreferredSize(new Dimension(TABLE_WIDTH, 50));
+        titlePanel.setBackground(Palette.ROYAL_BLUE.getColor());
+        titlePanel.setLayout(null);
+
+        ImageLabel studentIcon = new ImageLabel("studentIcon.png", ICON_SIZE, ICON_SIZE);
+        studentIcon.setBounds(PADDING_SIZE, PADDING_SIZE, ICON_SIZE, ICON_SIZE);
+        titlePanel.add(studentIcon);
+
+        TextLabel studentLabel = new TextLabel("Students List", ICON_SIZE);
+        studentLabel.setBounds(35, PADDING_SIZE, 300, ICON_SIZE);
+        studentLabel.setForeground(Palette.WHITE.getColor());
+        titlePanel.add(studentLabel);
+
+        JSeparator separator = new JSeparator();
+        separator.setOrientation(SwingConstants.HORIZONTAL);
+        separator.setForeground(Palette.WHITE.getColor());
+        separator.setBounds(PADDING_SIZE, 35, WIDTH - 50, ICON_SIZE);
+        titlePanel.add(separator);
+
+        //tablePanel
+        JPanel tablePanel = new JPanel();
+        tablePanel.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
+        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+        tablePanel.setBackground(Palette.WHITE.getColor());
+        tablePanel.add(createTablePanel(), BorderLayout.CENTER);
+
+        mainTblPanel.add(titlePanel, BorderLayout.NORTH);
+        mainTblPanel.add(tablePanel, BorderLayout.CENTER);
+
+        return mainTblPanel;
+    }
+
+    private JPanel createTablePanel() {
+        //borderlayout = table headers (north), rowPanel (center)
+        String[] tableColumnHeaders = { "Student ID", "Student Name", "Clearance Progress", "Clearance Status"};
+        int headerY = 15;
+        int headerX = 30;
+        JPanel tblPanel = new JPanel();
+        tblPanel.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
+        tblPanel.setLayout(new BorderLayout());
+        tblPanel.setBackground(new Color(255, 255, 255, 0));
+
+        JPanel columnPanel = new JPanel();
+        columnPanel.setPreferredSize(new Dimension(TABLE_WIDTH, (int) (TABLE_HEIGHT * 0.1)));
+        columnPanel.setLayout(null);
+        columnPanel.setBackground(new Color(255, 255, 255, 50));
+
+        for (String header : tableColumnHeaders) {
+            TextLabel columnHeader = new TextLabel(header, 15);
+            columnHeader.setBounds(headerX, headerY, 150, 15);
+            columnHeader.setForeground(Palette.WHITE.getColor());
+
+            headerX += 250;
+
+            columnPanel.add(columnHeader);
+        }
+
+        JPanel rowPanel = new JPanel();
+        rowPanel.setPreferredSize(new Dimension(TABLE_WIDTH, (int) (TABLE_HEIGHT * 0.77)));
+        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.Y_AXIS));
+        rowPanel.setBackground(new Color(255, 255, 255, 0));
+
+//        ArrayList<Student> students = this.db.getAllStudents();
+//        for (Student student : students) {
+//            rowPanel.add(this.createRow(student));
+//            rowPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+//        }
+
+        JScrollPane rowScrollPanel = new JScrollPane();
+        rowScrollPanel.setPreferredSize(new Dimension(TABLE_WIDTH, (int) (TABLE_HEIGHT * 0.77)));
+        rowScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        rowScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        rowScrollPanel.setBackground(new Color(255, 255, 255, 50));
+
+        tblPanel.add(columnPanel, BorderLayout.NORTH);
+        tblPanel.add(rowScrollPanel, BorderLayout.SOUTH);
+
+        return tblPanel;
+    }
+
+    private JPanel createRow() {
+        JPanel panel = new JPanel();
+        return panel;
     }
 
     @Override

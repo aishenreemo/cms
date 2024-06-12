@@ -31,8 +31,8 @@ public class InventoryUIFrame extends BaseFrame {
     private Database db;
     private JPanel table;
 
-    public static final int WIDTH = 900;
-    public static final int HEIGHT = 600;
+    public static final int WIDTH = 1000;
+    public static final int HEIGHT = 800;
     public static final int COLUMNS = 3;
     public static final int ICON_SIZE = 20;
     public static final int PADDING_SIZE = 10;
@@ -57,7 +57,7 @@ public class InventoryUIFrame extends BaseFrame {
     private void initializeTitlePanel() {
         JPanel panel = new JPanel();
         panel.setLayout(null);
-        panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.1)));
+        panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 0.075)));
         panel.setBackground(Palette.ROYAL_BLUE.getColor());
 
         ImageLabel titleIcon = new ImageLabel("NULogoAdmins.png", 170, 50);
