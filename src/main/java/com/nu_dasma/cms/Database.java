@@ -11,6 +11,7 @@ import java.util.Calendar;
 import com.nu_dasma.cms.model.BorrowedItem;
 import com.nu_dasma.cms.model.Document;
 import com.nu_dasma.cms.model.Item;
+import com.nu_dasma.cms.model.Student;
 import com.nu_dasma.cms.model.User;
 
 import java.io.File;
@@ -422,6 +423,24 @@ public class Database {
         } catch (SQLException e) {
             System.err.println("Borrow error: " + e.getMessage());
         }
+    }
+
+    public ArrayList<Student> getAllStudents() {
+        ArrayList<Student> students = new ArrayList<Student>();
+
+        try {
+            PreparedStatement statement = this.connection.prepareStatement("SELECT (user_id) FROM students;");
+            ResultSet resultSet = statement.executeQuery();
+            statement.close();
+
+            while (resultSet.next()) {
+                students.add(new Student(this.connection, resultSet.getInt("user_id")));
+            }
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        }
+
+        return students;
     }
 
     public void dispose() {

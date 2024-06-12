@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -16,11 +17,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
+import com.nu_dasma.cms.Database;
 import com.nu_dasma.cms.SwingApp;
+import com.nu_dasma.cms.model.Student;
 
 public class StudentListUIFrame extends BaseFrame {
     private static StudentListUIFrame instance;
-    public static final int WIDTH = 800;
+
+    private Database db;
+
+    public static final int WIDTH = 1000;
     public static final int HEIGHT = 600;
     public static final int COLUMNS = 3;
     public static final int ICON_SIZE = 20;
@@ -28,6 +34,9 @@ public class StudentListUIFrame extends BaseFrame {
 
     public StudentListUIFrame() {
         super("Student List");
+
+        this.db = Database.getInstance();
+
         this.setLayout(new BorderLayout());
         this.setSize(WIDTH, HEIGHT);
         this.setBackground(Color.WHITE);
@@ -56,7 +65,7 @@ public class StudentListUIFrame extends BaseFrame {
         });
         panel.add(back);
 
-        CustomButton logout = new CustomButton("logout", 50, 30, PADDING_SIZE, PADDING_SIZE);
+        CustomButton logout = new CustomButton("Logout", 50, 30, PADDING_SIZE, PADDING_SIZE);
         logout.setBackground(Color.WHITE);
         logout.setForeground(Color.GRAY);
         logout.addActionListener(e -> {
@@ -126,8 +135,14 @@ public class StudentListUIFrame extends BaseFrame {
     }
 
     private JPanel createTablePanel() {
-        String[] tableColumnHeaders = { "Student ID", "Student Name", "Total Tuition Fee", "Amount Paid",
-                "Remaining Balance", "Action" };
+        String[] tableColumnHeaders = {
+            "Student ID",
+            "Student Name",
+            "Total Tuition Fee",
+            "Amount Paid",
+            "Remaining Balance",
+            "Action"
+        };
 
         JPanel tablePanel = new JPanel();
         tablePanel.setPreferredSize(new Dimension(WIDTH - 60, 100));
@@ -136,7 +151,7 @@ public class StudentListUIFrame extends BaseFrame {
 
         JPanel titlePanel = new JPanel();
         titlePanel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 30));
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, 20, 5, PADDING_SIZE));
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, 20, 5, 40));
         titlePanel.setLayout(new GridLayout(1, tableColumnHeaders.length, 5, 5));
         titlePanel.setBackground(new Color(255, 255, 255, 100));
 
@@ -154,7 +169,11 @@ public class StudentListUIFrame extends BaseFrame {
         rowPanel.setBackground(new Color(255, 255, 255, 100));
         rowPanel.setBorder(BorderFactory.createEmptyBorder(PADDING_SIZE, PADDING_SIZE, PADDING_SIZE, PADDING_SIZE));
 
-        rowPanel.add(createRow("test", "test", "test", "test", "test"));
+        ArrayList<Student> students = this.db.getAllStudents();
+        for (Student student : students) {
+            rowPanel.add(this.createRow(student));
+            rowPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
 
         JScrollPane scrollPane = new JScrollPane(rowPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -165,11 +184,7 @@ public class StudentListUIFrame extends BaseFrame {
 
     }
 
-    private JPanel createRow(String itemName, String studentID,
-            String studentName,
-            String dueDate,
-            String penalty) {
-
+    private JPanel createRow(Student student) {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension((int) (WIDTH * 0.9), 50));
         panel.setMaximumSize(new Dimension((int) (WIDTH * 0.9), 50));
@@ -177,11 +192,20 @@ public class StudentListUIFrame extends BaseFrame {
         panel.setBackground(Color.WHITE);
         panel.setBorder(new RoundedBorder(10));
 
-        panel.add(new TextLabel(studentID, 12));
-        panel.add(new TextLabel(studentName, 12));
-        panel.add(new TextLabel(dueDate, 12));
-        panel.add(new TextLabel(penalty, 12));
-        panel.add(new CustomButton("resolve", 20, 50, PADDING_SIZE, PADDING_SIZE));
+        panel.add(new TextLabel(String.valueOf(student.id), 12));
+        panel.add(new TextLabel(student.getFullName(), 12));
+        panel.add(new TextLabel(String.valueOf(student.tuitionFee), 12));
+        panel.add(new TextLabel(String.valueOf(student.paidAmount), 12));
+
+        if (student.tuitionFee > student.paidAmount) {
+            panel.add(new TextLabel(String.valueOf(student.tuitionFee - student.paidAmount), 12));
+        } else {
+            panel.add(new TextLabel("CLEARED", 12));
+        }
+
+        CustomButton button = new CustomButton("Resolve", 20, 50, PADDING_SIZE, PADDING_SIZE);
+        button.setForeground(Color.WHITE);
+        panel.add(button);
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         return panel;
