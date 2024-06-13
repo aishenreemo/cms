@@ -4,12 +4,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+import com.nu_dasma.cms.Database;
 
 public class Student extends User {
     public int studentID;
     public int userID;
     public int paidAmount;
     public int tuitionFee;
+
+    private static final double MULTIPLIER_BORROWED_ITEMS = 1.0;
+    private static final double MULTIPLIER_TUITION_FEE = 2.0;
+    private static final double MULTIPLIER_DOCUMENTS = 2.0;
+    private static final double MULTIPLIER_TOTAL = MULTIPLIER_BORROWED_ITEMS +
+        MULTIPLIER_TUITION_FEE +
+        MULTIPLIER_DOCUMENTS;
 
     public Student(Connection connection, int userID) throws SQLException {
         super(connection, userID);
@@ -60,5 +70,38 @@ public class Student extends User {
         } else {
             System.out.println("\033[32mCLEARED\033[0m\n\n");
         }
+    }
+
+    public double getProgressPercentage() {
+        Database db = Database.getInstance();
+
+        ArrayList<Document> documents = db.getStudentDocuments(studentID);
+        ArrayList<BorrowedItem> items = db.getStudentBorrowedItems(studentID);
+
+        double documentsAmount = 0.0;
+        for (Document document : documents) {
+            if (document.status.equals("APPROVED")) {
+                documentsAmount += 1.0;
+            }
+        }
+
+        documentsAmount /= documents.size();
+        documentsAmount *= MULTIPLIER_DOCUMENTS;
+
+        double borrowedItemsAmount = 0.0;
+        if (items.isEmpty()) {
+            borrowedItemsAmount = 1.0;
+        }
+
+        borrowedItemsAmount *= MULTIPLIER_BORROWED_ITEMS;
+
+        double tuitionFeeAmount = 1.0;
+        if (this.paidAmount < this.tuitionFee) {
+            tuitionFeeAmount = (double) this.paidAmount / (double) this.tuitionFee;
+        }
+
+        tuitionFeeAmount *= MULTIPLIER_TUITION_FEE;
+
+        return (documentsAmount + borrowedItemsAmount + tuitionFeeAmount) / MULTIPLIER_TOTAL;
     }
 }

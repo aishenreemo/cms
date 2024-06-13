@@ -3,16 +3,25 @@ package com.nu_dasma.cms.swing_ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
+import com.nu_dasma.cms.Database;
 import com.nu_dasma.cms.SwingApp;
+import com.nu_dasma.cms.model.Student;
+import com.nu_dasma.cms.model.User;
 
 public class AdminUIFrame extends BaseFrame {
     private static AdminUIFrame instance;
@@ -29,8 +38,12 @@ public class AdminUIFrame extends BaseFrame {
     public static final int TABLE_WIDTH = WIDTH - 30;
     public static final int TABLE_HEIGHT = (int) (HEIGHT * 0.65);
 
+    private User user;
+
     public AdminUIFrame() {
         super("CMS Admin Home");
+
+        this.initializeUser();
         this.setLayout(new BorderLayout());
         this.setSize(WIDTH, HEIGHT);
         this.setBackground(Palette.WHITE.getColor());
@@ -76,8 +89,8 @@ public class AdminUIFrame extends BaseFrame {
         mainPanel.setBackground(Palette.GOLDEN_YELLOW.getColor());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        TextLabel greetingLabel = new TextLabel("Hello, welcome to your control panel!", 20);
-        greetingLabel.setBounds(PADDING_SIZE, PADDING_SIZE, 500, 20);
+        TextLabel greetingLabel = new TextLabel(String.format("Hello %s, welcome to your control panel!", this.user.firstName), 20);
+        greetingLabel.setBounds(PADDING_SIZE, PADDING_SIZE, WIDTH, 20);
         greetingLabel.setForeground(Palette.ROYAL_BLUE.getColor());
         mainPanel.add(greetingLabel);
 
@@ -108,7 +121,7 @@ public class AdminUIFrame extends BaseFrame {
         documents.add(documentIcon);
 
         TextLabel documentLabel = new TextLabel("Documents", 20);
-        documentLabel.setBounds(PANEL_ICON_SIZE + 15, 20, 100, 20);
+        documentLabel.setBounds(PANEL_ICON_SIZE + 15, 20, 200, 20);
         documentLabel.setForeground(Palette.WHITE.getColor());
         documents.add(documentLabel);
 
@@ -269,19 +282,21 @@ public class AdminUIFrame extends BaseFrame {
         JPanel rowPanel = new JPanel();
         rowPanel.setPreferredSize(new Dimension(TABLE_WIDTH, (int) (TABLE_HEIGHT * 0.77)));
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.Y_AXIS));
-        rowPanel.setBackground(new Color(255, 255, 255, 0));
+        rowPanel.setBackground(Palette.WHITE.getColor());
+        rowPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-//        ArrayList<Student> students = this.db.getAllStudents();
-//        for (Student student : students) {
-//            rowPanel.add(this.createRow(student));
-//            rowPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-//        }
+        ArrayList<Student> students = Database.getInstance().getAllStudents();
+        for (Student student : students) {
+            rowPanel.add(this.createRow(student));
+            rowPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
 
-        JScrollPane rowScrollPanel = new JScrollPane();
+        JScrollPane rowScrollPanel = new JScrollPane(rowPanel);
         rowScrollPanel.setPreferredSize(new Dimension(TABLE_WIDTH, (int) (TABLE_HEIGHT * 0.77)));
         rowScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         rowScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         rowScrollPanel.setBackground(new Color(255, 255, 255, 50));
+        rowScrollPanel.setBackground(Palette.WHITE.getColor());
 
         tblPanel.add(columnPanel, BorderLayout.NORTH);
         tblPanel.add(rowScrollPanel, BorderLayout.SOUTH);
@@ -289,9 +304,63 @@ public class AdminUIFrame extends BaseFrame {
         return tblPanel;
     }
 
-    private JPanel createRow() {
+    private JPanel createRow(Student student) {
+        int headerX = 30;
+        int paddingX = 250;
+        int paddingY = 15;
+
         JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension((int) (WIDTH * 1.85), 50));
+        panel.setMaximumSize(new Dimension((int) (WIDTH * 1.85), 50));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.setLayout(null);
+        panel.setBackground(Palette.WHITE.getColor());
+        panel.setBorder(new RoundedBorder(10));
+
+        TextLabel studentID = new TextLabel(String.valueOf(student.studentID), 12);
+        studentID.setBounds(headerX, paddingY, 150, 15);
+        panel.add(studentID);
+
+        headerX += paddingX;
+
+        TextLabel studentName = new TextLabel(student.getFullName(), 12);
+        studentName.setBounds(headerX, paddingY, 150, 15);
+        panel.add(studentName);
+
+        headerX += paddingX;
+
+        int progressAmount = (int) (student.getProgressPercentage() * 100);
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        progressBar.setValue(progressAmount);
+        progressBar.setString(String.format("%d%%", progressAmount));
+        progressBar.setBounds(headerX, 10, 150, 30);
+        panel.add(progressBar);
+
+        headerX += paddingX;
+        TextLabel status = new TextLabel("ONGOING", 12);
+        status.setBounds(headerX, paddingY, 150, 15);
+        if (progressAmount > 99) {
+            status.setText("CLEARED");
+        }
+
+        panel.add(status);
+
         return panel;
+    }
+
+    private void initializeUser() {
+        try {
+            Database db = Database.getInstance();
+
+            int userID = 1;
+            if (db.loggedInUser != null) {
+                userID = db.loggedInUser.id;
+            }
+
+            this.user = new User(db.connection, userID);
+        } catch (SQLException e) {
+            System.err.println("Read error: " + e.getMessage());
+        }
     }
 
     @Override

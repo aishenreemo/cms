@@ -25,7 +25,7 @@ import com.nu_dasma.cms.SwingApp;
 public class LoginFrame extends BaseFrame {
     private static LoginFrame instance;
     public static final int WIDTH = 400;
-    public static final int HEIGHT = 600;
+    public static final int HEIGHT = 500;
 
     private MessageDigest md;
     private JTextField email;

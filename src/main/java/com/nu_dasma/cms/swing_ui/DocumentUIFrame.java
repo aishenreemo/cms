@@ -203,6 +203,8 @@ public class DocumentUIFrame extends BaseFrame {
         CustomButton approveButton = new CustomButton("approve", 20, 50, PADDING_SIZE, PADDING_SIZE);
         CustomButton rejectButton = new CustomButton("reject", 20, 50, PADDING_SIZE, PADDING_SIZE);
 
+        viewButton.setForeground(Palette.WHITE.getColor());
+        viewButton.setBackground(Palette.ROYAL_BLUE.getColor());
         viewButton.addActionListener(e -> {
             DocumentUIFrame frame = DocumentUIFrame.getInstance();
             try {
@@ -212,6 +214,8 @@ public class DocumentUIFrame extends BaseFrame {
             }
         });
 
+        approveButton.setForeground(Palette.WHITE.getColor());
+        approveButton.setBackground(Palette.ROYAL_BLUE.getColor());
         approveButton.addActionListener(e -> {
             DocumentUIFrame frame = DocumentUIFrame.getInstance();
             frame.db.updateDocumentStatus(studentID, documentTypeID, "APPROVED");
@@ -221,6 +225,8 @@ public class DocumentUIFrame extends BaseFrame {
             this.table.add(this.createTablePanel());
         });
 
+        rejectButton.setForeground(Palette.WHITE.getColor());
+        rejectButton.setBackground(Palette.ROYAL_BLUE.getColor());
         rejectButton.addActionListener(e -> {
             DocumentUIFrame frame = DocumentUIFrame.getInstance();
             frame.db.updateDocumentStatus(studentID, documentTypeID, "REJECTED");

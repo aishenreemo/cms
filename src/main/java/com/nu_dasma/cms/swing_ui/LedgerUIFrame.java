@@ -199,7 +199,7 @@ public class LedgerUIFrame extends BaseFrame {
         panel.setBackground(Palette.WHITE.getColor());
         panel.setBorder(new RoundedBorder(10));
 
-        panel.add(new TextLabel(String.valueOf(student.id), 12));
+        panel.add(new TextLabel(String.valueOf(student.studentID), 12));
         panel.add(new TextLabel(student.getFullName(), 12));
         panel.add(new TextLabel(String.valueOf(student.tuitionFee), 12));
         panel.add(new TextLabel(String.valueOf(student.paidAmount), 12));
