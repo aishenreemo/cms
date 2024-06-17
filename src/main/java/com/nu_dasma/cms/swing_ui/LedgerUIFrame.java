@@ -213,22 +213,31 @@ public class LedgerUIFrame extends BaseFrame {
         CustomButton button = new CustomButton("Resolve", 20, 50, PADDING_SIZE, PADDING_SIZE);
         button.setBackground(Palette.ROYAL_BLUE.getColor());
         button.setForeground(Color.WHITE);
+
+            if (student.tuitionFee > student.paidAmount) {
+                button.setEnabled(true);
+
+            } else {
+                button.setEnabled(false);
+            }
+
         button.addActionListener(e -> {
             String[] options = {"Add paid amount", "Set paid amount", "Cancel"};
 
             int choice = JOptionPane.showOptionDialog(null,
-                "What do you want to do:",
-                "Selection",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                options,
-                options[0]
-            );
+                    "What do you want to do:",
+                    "Selection",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+                    );
 
             if (choice == 2) {
                 return;
             }
+
 
             LedgerUIFrame frame = LedgerUIFrame.getInstance();
 

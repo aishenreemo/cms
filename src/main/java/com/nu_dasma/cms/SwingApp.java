@@ -2,6 +2,7 @@ package com.nu_dasma.cms;
 
 import com.nu_dasma.cms.swing_ui.AdminUIFrame;
 import com.nu_dasma.cms.swing_ui.BaseFrame;
+import com.nu_dasma.cms.swing_ui.ClearanceFrame;
 import com.nu_dasma.cms.swing_ui.DocumentUIFrame;
 import com.nu_dasma.cms.swing_ui.InventoryUIFrame;
 import com.nu_dasma.cms.swing_ui.LedgerUIFrame;
@@ -16,7 +17,7 @@ public class SwingApp {
 
     private SwingApp() {
         this.db = Database.getInstance();
-        this.ui = LoginFrame.getInstance();
+        this.ui = AdminUIFrame.getInstance();
     }
 
     public static void main(String[] args) {

@@ -107,8 +107,8 @@ public class StudentUIFrame extends BaseFrame {
 
     private void initializeMainPanel() {
         JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 1.6)));
-        panel.setMinimumSize(new Dimension(WIDTH, (int) (HEIGHT * 1.6)));
+        panel.setPreferredSize(new Dimension(WIDTH, (int) (HEIGHT * 1.7)));
+        panel.setMinimumSize(new Dimension(WIDTH, (int) (HEIGHT * 1.7)));
 
         panel.setLayout(null);
         panel.setBackground(Palette.GOLDEN_YELLOW.getColor());
@@ -117,6 +117,7 @@ public class StudentUIFrame extends BaseFrame {
         panel.add(this.createMatriculationPanel());
         panel.add(this.createFinancialPanel());
         panel.add(this.createMiscellanousPanel());
+        panel.add(this.createClearanceButton(user));
 
         JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -398,6 +399,29 @@ public class StudentUIFrame extends BaseFrame {
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
+    }
+    private CustomButton createClearanceButton(Student student) {
+        double width = WIDTH * 0.9;
+        double height = HEIGHT * 0.1 ;
+
+        CustomButton button = new CustomButton("View Clearance",(int)(width), (int)(height), 10, 10);
+        button.setVisible(false);
+        button.setBounds(5, 930,(int) (width), (int) (height));
+        button.setBackground(Palette.ROYAL_BLUE.getColor());
+        button.setForeground(Palette.WHITE.getColor());
+
+        button.addActionListener(e -> {
+            SwingApp app = SwingApp.getInstance();
+            app.ui.dispose();
+            app.ui = ClearanceFrame.getInstance(this.user);
+        });
+        
+        int progressAmount = (int) (student.getProgressPercentage() * 100);
+        if (progressAmount > 99) {
+            button.setVisible(true);
+        }
+
+        return button;
     }
 
     @Override
